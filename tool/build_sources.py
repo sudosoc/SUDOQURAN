@@ -123,11 +123,14 @@ def _name_surah(stem):
     return None
 
 
-def detect_surah(filename: str):
+def detect_surah(filename: str, strict: bool = False):
+    """strict: number only counts when it leads the file name (for small,
+    hand-made collections where other numbers are noise)."""
     base = urllib.parse.unquote(filename).rsplit("/", 1)[-1]
     stem = base.rsplit(".", 1)[0]
     num = None
-    for m in re.finditer(r"(?<!\d)(\d{1,3})(?!\d)", stem):
+    pattern = r"^\s*(\d{1,3})(?!\d)" if strict else r"(?<!\d)(\d{1,3})(?!\d)"
+    for m in re.finditer(pattern, stem):
         n = int(m.group(1))
         if 1 <= n <= 114:
             num = n
@@ -285,12 +288,14 @@ def from_archive(rid, queries):
         if not guard_ok(rid, f"{identifier} {title}") or excluded(f"{identifier} {title}"):
             return None
         mapping = {}
+        numbered = sum(1 for name, _ in files if re.search(r"\d", name.rsplit("/", 1)[-1]))
+        strict = numbered < 50
         for name, size in files:
             if size and size < 50_000:
                 continue
             if excluded(name):
                 continue
-            n = detect_surah(name)
+            n = detect_surah(name, strict=strict)
             if n and (n not in mapping or size > mapping[n][1]):
                 mapping[n] = (name, size)
         if not mapping:
@@ -326,6 +331,8 @@ def ruqyah_all():
             full = f"{identifier} {title} {fname}"
             nf, lf = norm(full), full.lower()
             nfile, lfile = norm(fname), fname.lower()
+            if re.search(r"(sourate|surah|sura|سوره|سورة)", lfile + nfile):
+                continue  # a surah recitation, not a ruqyah track
             for rid, must_any, guard, _ in RUQYAH:
                 if not any(norm(m) in nf or m in lf for m in must_any):
                     continue
@@ -342,7 +349,7 @@ def ruqyah_all():
         return found
 
     with cf.ThreadPoolExecutor(8) as ex:
-        for res in ex.map(inspect, list(ids)[:60]):
+        for res in ex.map(inspect, list(ids)[:150]):
             for rid, t in res:
                 out[rid].append(t)
     for rid in out:
