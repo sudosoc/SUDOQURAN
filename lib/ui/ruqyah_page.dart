@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import '../data/ruqyah.dart';
 import '../services/library.dart';
 import '../services/player.dart';
+import '../services/settings.dart';
+import '../services/sources.dart';
 import 'glass.dart';
-import 'import_sheet.dart';
 
 class RuqyahSection extends StatefulWidget {
   const RuqyahSection({super.key});
@@ -19,7 +20,7 @@ class _RuqyahSectionState extends State<RuqyahSection> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Listenable.merge([Library.instance, Player.instance]),
+      listenable: Listenable.merge([Library.instance, Player.instance, Sources.instance, Settings.instance]),
       builder: (context, _) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -107,34 +108,18 @@ class _SheikhBody extends StatelessWidget {
   final RuqyahSheikh sheikh;
   const _SheikhBody({super.key, required this.sheikh});
 
-  Future<void> _import(BuildContext context) async {
-    final sel = await pickImportSource(context,
-        hint: 'اختار ملفات رقية الشيخ ${sheikh.name} من الفلاشة أو الكارت — هتتنسخ جوه التطبيق وتشتغل أوفلاين.');
-    if (sel == null) return;
-    final n = await Library.instance
-        .importToRuqyah(sheikh, folder: sel.folder, files: sel.files);
-    if (context.mounted) toast(context, 'تم استيراد $n ملف');
-  }
-
-  Future<void> _fromUrl(BuildContext context) async {
-    final url = await askText(context,
-        title: 'تحميل رقية من رابط مباشر', hint: 'https://.../ruqyah.mp3');
-    if (url == null || url.trim().isEmpty) return;
-    final job = Library.instance.downloadRuqyahUrl(sheikh, url);
-    if (context.mounted) toast(context, 'جاري التحميل...');
-    final res = await job;
-    if (context.mounted) {
-      toast(context, res == null || res.failed > 0 ? 'فشل التحميل — اتأكد من الرابط' : 'تم التحميل ✓');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final lib = Library.instance;
-    final tracks = lib.ruqyahTracks(sheikh);
+    final tracks = Sources.instance.ruqyahTracks(sheikh.id);
+    final localCount = tracks.where((t) => lib.localTrack(sheikh, t) != null).length;
+    final tKey = lib.tracksKey(sheikh);
+    final tJob = lib.jobs[tKey];
+    final tDownloading = lib.isDownloading(tKey);
+    final stream = Settings.instance.allowStreaming;
     final p = Player.instance;
     final ayatFiles = sheikh.everyAyahFolder != null ? lib.ruqyahAyatFiles(sheikh) : const [];
-    final ayatKey = 'ruqyah_${sheikh.id}';
+    final ayatKey = lib.ayatKey(sheikh);
     final ayatJob = lib.jobs[ayatKey];
     final ayatDownloading = lib.isDownloading(ayatKey);
     final total = ruqyahAyatCount;
@@ -238,7 +223,7 @@ class _SheikhBody extends StatelessWidget {
                         sheikh.everyAyahFolder != null ? 'تسجيلات رقية إضافية' : 'تسجيلات الرقية',
                         style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
                   ),
-                  if (tracks.isNotEmpty)
+                  if (tracks.isNotEmpty && (localCount > 0 || stream))
                     GlassButton(
                         icon: Icons.play_arrow_rounded,
                         label: 'تشغيل الكل',
@@ -246,35 +231,61 @@ class _SheikhBody extends StatelessWidget {
                         primary: true,
                         onTap: () => p.playRuqyahTracks(sheikh)),
                   const SizedBox(width: 10),
-                  GlassButton(
-                      icon: Icons.usb_rounded,
-                      label: 'استيراد',
-                      size: 62,
-                      onTap: () => _import(context)),
-                  const SizedBox(width: 10),
-                  GlassButton(
-                      icon: Icons.link_rounded, size: 62, onTap: () => _fromUrl(context)),
+                  if (tracks.isNotEmpty && localCount < tracks.length)
+                    tDownloading
+                        ? GlassButton(
+                            icon: Icons.stop_rounded,
+                            label: 'إيقاف',
+                            size: 62,
+                            onTap: () => lib.cancel(tKey))
+                        : GlassButton(
+                            icon: Icons.download_rounded,
+                            label: 'تحميل',
+                            size: 62,
+                            onTap: () => lib.downloadRuqyahTracks(sheikh)),
                 ],
               ),
+              const SizedBox(height: 6),
+              Text(
+                tDownloading
+                    ? 'جاري التحميل ${tJob!.done}/${tJob!.total}'
+                    : '$localCount من ${tracks.length} تسجيل على الجهاز',
+                style: const TextStyle(color: AppColors.muted, fontSize: 17),
+              ),
+              if (tDownloading)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: LinearProgressIndicator(
+                    value: tJob!.fraction,
+                    minHeight: 6,
+                    borderRadius: BorderRadius.circular(6),
+                    color: AppColors.gold,
+                    backgroundColor: Colors.white12,
+                  ),
+                ),
               const SizedBox(height: 10),
               if (tracks.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   child: Text(
-                    'مفيش تسجيلات لسه. حط ملفات رقية الشيخ ${sheikh.name} (mp3) على فلاشة، '
-                    'ادخل "استيراد" واختار المجلد — أو حمّلها من رابط مباشر 🔗',
+                    Sources.instance.refreshing
+                        ? 'بندوّر على التسجيلات...'
+                        : 'لسه ملقيناش تسجيلات أونلاين للشيخ ${sheikh.name} — قائمة المصادر بتتحدث تلقائيًا كل أسبوع.',
                     style: const TextStyle(color: AppColors.muted, fontSize: 18, height: 1.6),
                   ),
                 ),
               for (var i = 0; i < tracks.length; i++)
                 _TrackRow(
-                  title: Player.trackTitle(tracks[i]),
+                  title: tracks[i].title,
                   index: i,
+                  local: lib.localTrack(sheikh, tracks[i]) != null,
                   playing: p.kind == PlayKind.ruqyahTracks &&
                       p.sheikhId == sheikh.id &&
-                      p.audio.currentIndex == i,
-                  onPlay: () => p.playRuqyahTracks(sheikh, index: i),
-                  onDelete: () => lib.deleteRuqyahTrack(tracks[i]),
+                      p.title == tracks[i].title,
+                  onPlay: () async {
+                    final ok = await p.playRuqyahTracks(sheikh, index: i);
+                    if (!ok && context.mounted) toast(context, 'حمّل التسجيل الأول أو شغّل الأونلاين من الإعدادات');
+                  },
                 ),
             ],
           ),
@@ -288,14 +299,14 @@ class _TrackRow extends StatelessWidget {
   final String title;
   final int index;
   final bool playing;
+  final bool local;
   final VoidCallback onPlay;
-  final VoidCallback onDelete;
   const _TrackRow({
     required this.title,
     required this.index,
     required this.playing,
+    required this.local,
     required this.onPlay,
-    required this.onDelete,
   });
 
   @override
@@ -307,21 +318,6 @@ class _TrackRow extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
           onTap: onPlay,
-          onLongPress: () async {
-            final ok = await showDialog<bool>(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                backgroundColor: AppColors.bg1,
-                title: const Text('حذف التسجيل؟'),
-                content: Text(title),
-                actions: [
-                  TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
-                  TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('حذف')),
-                ],
-              ),
-            );
-            if (ok == true) onDelete();
-          },
           child: Ink(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
@@ -342,6 +338,8 @@ class _TrackRow extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
                 ),
+                Icon(local ? Icons.offline_pin_rounded : Icons.cloud_outlined,
+                    color: local ? AppColors.emerald : AppColors.muted, size: 24),
               ],
             ),
           ),

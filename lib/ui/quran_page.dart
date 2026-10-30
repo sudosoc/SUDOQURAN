@@ -5,8 +5,8 @@ import '../data/surahs.dart';
 import '../services/library.dart';
 import '../services/player.dart';
 import '../services/settings.dart';
+import '../services/sources.dart';
 import 'glass.dart';
-import 'import_sheet.dart';
 
 /// Quran section: reciter grid → surah grid (nested navigator keeps the
 /// player panel and side rail in place).
@@ -43,7 +43,7 @@ class ReciterGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Listenable.merge([Library.instance, Settings.instance]),
+      listenable: Listenable.merge([Library.instance, Settings.instance, Sources.instance]),
       builder: (context, _) {
         final last = Settings.instance.lastSession;
         return CustomScrollView(
@@ -126,7 +126,7 @@ class _ReciterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final lib = Library.instance;
     final local = lib.localSurahs(reciter).length;
-    final online = lib.isOnline(reciter);
+    final avail = lib.available(reciter).length;
     final job = lib.jobs[reciter.id];
     final downloading = lib.isDownloading(reciter.id);
     final playingThis = Player.instance.reciterId == reciter.id &&
@@ -134,13 +134,13 @@ class _ReciterCard extends StatelessWidget {
 
     final (statusIcon, statusText, statusColor) = downloading
         ? (Icons.downloading_rounded, 'جاري التحميل ${(job!.fraction * 100).round()}%', AppColors.teal)
-        : local == 114
-            ? (Icons.offline_pin_rounded, 'المصحف كامل أوفلاين', AppColors.emerald)
+        : avail > 0 && local >= avail
+            ? (Icons.offline_pin_rounded, avail == 114 ? 'المصحف كامل أوفلاين' : '$local سورة أوفلاين', AppColors.emerald)
             : local > 0
-                ? (Icons.download_done_rounded, '$local سورة محملة', AppColors.emerald)
-                : online
-                    ? (Icons.cloud_outlined, 'متاح للتحميل', AppColors.muted)
-                    : (Icons.usb_rounded, 'استيراد من فلاشة', AppColors.gold);
+                ? (Icons.download_done_rounded, '$local من $avail محملة', AppColors.emerald)
+                : avail > 0
+                    ? (Icons.cloud_outlined, '$avail سورة متاحة للتحميل', AppColors.muted)
+                    : (Icons.hourglass_top_rounded, 'جاري البحث عن مصدر', AppColors.gold);
 
     return Material(
       color: Colors.transparent,
@@ -207,42 +207,13 @@ class SurahGrid extends StatelessWidget {
   final VoidCallback onBack;
   const SurahGrid({super.key, required this.reciter, required this.onBack});
 
-  Future<void> _import(BuildContext context) async {
-    final sel = await pickImportSource(context,
-        hint: 'الملفات بتتنسخ جوه التطبيق. التسمية زي 001.mp3 أو "018 الكهف.mp3" أو "سورة الكهف.mp3" — التطبيق بيتعرف على السورة لوحده.');
-    if (sel == null) return;
-    if (context.mounted) toast(context, 'جاري النسخ...');
-    final (ok, skip) =
-        await Library.instance.importToReciter(reciter, folder: sel.folder, files: sel.files);
-    if (context.mounted) {
-      toast(context, 'تم استيراد $ok سورة${skip > 0 ? ' — تجاهل $skip ملف مش متعرف عليه' : ''}');
-    }
-  }
-
-  Future<void> _menu(BuildContext context, String v) async {
-    final lib = Library.instance;
-    switch (v) {
-      case 'server':
-        final url = await askText(context,
-            title: 'رابط سيرفر التلاوة',
-            initial: Settings.instance.serverOverride[reciter.id] ?? lib.activeMoshaf(reciter)?.server,
-            hint: 'https://server.example.com/reciter/  (001.mp3 … 114.mp3)');
-        if (url != null) await Settings.instance.setServerOverride(reciter.id, url);
-        lib.refresh();
-      case 'delete':
-        await lib.deleteReciter(reciter);
-        if (context.mounted) toast(context, 'تم حذف السور المحملة');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final lib = Library.instance;
     return ListenableBuilder(
-      listenable: Listenable.merge([lib, Settings.instance, Player.instance]),
+      listenable: Listenable.merge([lib, Settings.instance, Player.instance, Sources.instance]),
       builder: (context, _) {
-        final moshafs = lib.moshafsFor(reciter);
-        final active = lib.activeMoshaf(reciter);
+        final avail = lib.available(reciter);
         final local = lib.localSurahs(reciter);
         final job = lib.jobs[reciter.id];
         final downloading = lib.isDownloading(reciter.id);
@@ -276,13 +247,15 @@ class SurahGrid extends StatelessWidget {
                             Text(
                               downloading
                                   ? 'جاري التحميل: ${job!.done}/${job!.total}${job.failed > 0 ? ' (فشل ${job.failed})' : ''}'
-                                  : '${local.length} من 114 سورة على الجهاز${active == null ? ' · غير متاح أونلاين' : ''}',
+                                  : avail.isEmpty
+                                      ? 'لسه مفيش مصدر — المصادر بتتحدث تلقائيًا'
+                                      : '${local.length} من ${avail.length} سورة على الجهاز${avail.length < 114 ? ' (المتاح أونلاين ${avail.length})' : ''}',
                               style: const TextStyle(color: AppColors.muted, fontSize: 16),
                             ),
                           ],
                         ),
                       ),
-                      if (active != null)
+                      if (avail.isNotEmpty)
                         downloading
                             ? GlassButton(
                                 icon: Icons.stop_rounded,
@@ -291,10 +264,10 @@ class SurahGrid extends StatelessWidget {
                                 onTap: () => lib.cancel(reciter.id))
                             : GlassButton(
                                 icon: Icons.download_rounded,
-                                label: local.length >= active.surahs.length ? 'تم التحميل' : 'تحميل الكل',
+                                label: lib.reciterComplete(reciter) ? 'تم التحميل' : 'تحميل الكل',
                                 size: 60,
-                                primary: local.length < active.surahs.length,
-                                onTap: local.length >= active.surahs.length
+                                primary: !lib.reciterComplete(reciter),
+                                onTap: lib.reciterComplete(reciter)
                                     ? null
                                     : () {
                                         lib.downloadReciter(reciter);
@@ -302,26 +275,25 @@ class SurahGrid extends StatelessWidget {
                                       },
                               ),
                       const SizedBox(width: 10),
-                      GlassButton(
-                          icon: Icons.usb_rounded,
-                          label: 'استيراد',
+                      if (local.isNotEmpty && !downloading)
+                        GlassButton(
+                          icon: Icons.delete_outline_rounded,
                           size: 60,
-                          onTap: () => _import(context)),
-                      const SizedBox(width: 6),
-                      PopupMenuButton<String>(
-                        iconSize: 34,
-                        icon: const Icon(Icons.more_vert_rounded),
-                        color: AppColors.bg1,
-                        onSelected: (v) => _menu(context, v),
-                        itemBuilder: (_) => const [
-                          PopupMenuItem(
-                              value: 'server',
-                              child: Text('تعديل رابط السيرفر', style: TextStyle(fontSize: 18))),
-                          PopupMenuItem(
-                              value: 'delete',
-                              child: Text('حذف السور المحملة', style: TextStyle(fontSize: 18))),
-                        ],
-                      ),
+                          onTap: () async {
+                            final ok = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                backgroundColor: AppColors.bg1,
+                                title: Text('حذف سور ${reciter.name} المحملة؟'),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
+                                  TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('حذف')),
+                                ],
+                              ),
+                            );
+                            if (ok == true) await lib.deleteReciter(reciter);
+                          },
+                        ),
                     ],
                   ),
                   if (downloading)
@@ -333,32 +305,6 @@ class SurahGrid extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                         color: AppColors.gold,
                         backgroundColor: Colors.white12,
-                      ),
-                    ),
-                  if (moshafs.length > 1)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: SizedBox(
-                        height: 46,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            for (final m in moshafs)
-                              Padding(
-                                padding: const EdgeInsetsDirectional.only(end: 10),
-                                child: ChoiceChip(
-                                  label: Text('${m.name} (${m.surahs.length})',
-                                      style: const TextStyle(fontSize: 16)),
-                                  selected: m.server == active?.server,
-                                  selectedColor: AppColors.gold.withOpacity(0.3),
-                                  onSelected: downloading
-                                      ? null
-                                      : (_) => Settings.instance
-                                          .setSelectedVariant(reciter.id, m.server),
-                                ),
-                              ),
-                          ],
-                        ),
                       ),
                     ),
                 ],
@@ -378,7 +324,7 @@ class SurahGrid extends StatelessWidget {
                 itemBuilder: (context, i) {
                   final s = surahs[i];
                   final isLocal = local.contains(s.number);
-                  final remote = active?.surahs.contains(s.number) ?? false;
+                  final remote = avail.contains(s.number);
                   final playable = isLocal || (stream && remote);
                   return _SurahTile(
                     s: s,
@@ -392,7 +338,7 @@ class SurahGrid extends StatelessWidget {
                         lib.downloadReciter(reciter, only: [s.number]);
                         if (context.mounted) toast(context, 'جاري تحميل سورة ${s.name}...');
                       } else if (context.mounted) {
-                        toast(context, 'السورة دي مش موجودة — استوردها من فلاشة');
+                        toast(context, 'السورة دي لسه ملهاش مصدر أونلاين للقارئ ده');
                       }
                     },
                   );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/reciters.dart';
 import '../services/library.dart';
 import '../services/settings.dart';
+import '../services/sources.dart';
 import 'glass.dart';
 
 class SettingsSection extends StatefulWidget {
@@ -26,7 +27,7 @@ class _SettingsSectionState extends State<SettingsSection> {
     final s = Settings.instance;
     final lib = Library.instance;
     return ListenableBuilder(
-      listenable: Listenable.merge([s, lib]),
+      listenable: Listenable.merge([s, lib, Sources.instance]),
       builder: (context, _) {
         return ListView(
           padding: const EdgeInsets.only(bottom: 20),
@@ -35,6 +36,8 @@ class _SettingsSectionState extends State<SettingsSection> {
               padding: EdgeInsets.fromLTRB(4, 4, 4, 16),
               child: Text('الإعدادات', style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900)),
             ),
+            const _DownloadEverythingCard(),
+            const SizedBox(height: 16),
             Glass(
               radius: 26,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -46,6 +49,14 @@ class _SettingsSectionState extends State<SettingsSection> {
                     subtitle: 'لو مقفول، التطبيق يشغل اللي على الجهاز بس (أوفلاين 100%)',
                     value: s.allowStreaming,
                     onChanged: s.setAllowStreaming,
+                  ),
+                  const Divider(color: Colors.white12),
+                  _SwitchRow(
+                    icon: Icons.cloud_download_rounded,
+                    title: 'كمّل التحميل كل ما التطبيق يفتح',
+                    subtitle: 'مفيد لو العربية بتقفل والتحميل مخلصش — خلي بالك من باقة النت',
+                    value: s.autoDownload,
+                    onChanged: s.setAutoDownload,
                   ),
                   const Divider(color: Colors.white12),
                   _SwitchRow(
@@ -104,10 +115,10 @@ class _SettingsSectionState extends State<SettingsSection> {
                       const Icon(Icons.cloud_sync_rounded, color: AppColors.gold, size: 30),
                       const SizedBox(width: 12),
                       const Expanded(
-                        child: Text('مصادر التلاوات (mp3quran.net)',
+                        child: Text('مصادر التلاوات',
                             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
                       ),
-                      if (lib.resolving)
+                      if (Sources.instance.refreshing)
                         const SizedBox(
                             width: 28, height: 28, child: CircularProgressIndicator(strokeWidth: 3))
                       else
@@ -115,16 +126,20 @@ class _SettingsSectionState extends State<SettingsSection> {
                           icon: Icons.sync_rounded,
                           label: 'تحديث',
                           size: 54,
-                          onTap: lib.refreshCatalogue,
+                          onTap: Sources.instance.refresh,
                         ),
                     ],
                   ),
-                  if (lib.resolveError != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(lib.resolveError!,
-                          style: const TextStyle(color: Colors.orangeAccent, fontSize: 16)),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      Sources.instance.error ??
+                          'mp3quran · quranicaudio · archive.org — آخر تحديث: ${Sources.instance.generated?.replaceAll('T', ' ').replaceAll('Z', '') ?? '—'}',
+                      style: TextStyle(
+                          color: Sources.instance.error != null ? Colors.orangeAccent : AppColors.muted,
+                          fontSize: 15),
                     ),
+                  ),
                   const SizedBox(height: 10),
                   for (final r in reciters)
                     Padding(
@@ -132,19 +147,26 @@ class _SettingsSectionState extends State<SettingsSection> {
                       child: Row(
                         children: [
                           Icon(
-                            lib.isOnline(r) ? Icons.check_circle_rounded : Icons.usb_rounded,
-                            color: lib.isOnline(r) ? AppColors.emerald : AppColors.gold,
+                            lib.reciterComplete(r)
+                                ? Icons.offline_pin_rounded
+                                : lib.available(r).isNotEmpty
+                                    ? Icons.cloud_done_rounded
+                                    : Icons.hourglass_top_rounded,
+                            color: lib.reciterComplete(r)
+                                ? AppColors.emerald
+                                : lib.available(r).isNotEmpty
+                                    ? AppColors.teal
+                                    : AppColors.gold,
                             size: 22,
                           ),
                           const SizedBox(width: 10),
-                          SizedBox(
-                              width: 240,
-                              child: Text(r.name, style: const TextStyle(fontSize: 18))),
+                          SizedBox(width: 240, child: Text(r.name, style: const TextStyle(fontSize: 18))),
                           Expanded(
                             child: Text(
-                              lib.isOnline(r)
-                                  ? '${lib.activeMoshaf(r)!.name} · ${lib.localSurahs(r).length}/114 محمل'
-                                  : 'مش موجود أونلاين — استيراد من فلاشة أو رابط مخصص',
+                              lib.available(r).isEmpty
+                                  ? 'لسه مفيش مصدر'
+                                  : 'متاح ${lib.available(r).length} · محمل ${lib.localSurahs(r).length}'
+                                      '${Sources.instance.labels[r.id] != null ? ' · ${Sources.instance.labels[r.id]}' : ''}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(fontSize: 15, color: AppColors.muted),
@@ -208,6 +230,74 @@ class _SwitchRow extends StatelessWidget {
               activeTrackColor: AppColors.gold,
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DownloadEverythingCard extends StatelessWidget {
+  const _DownloadEverythingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final lib = Library.instance;
+    final running = lib.everythingRunning;
+    final totalAvail = reciters.fold<int>(0, (a, r) => a + lib.available(r).length);
+    final totalLocal = reciters.fold<int>(
+        0, (a, r) => a + lib.localSurahs(r).intersection(lib.available(r)).length);
+    final frac = totalAvail == 0 ? 0.0 : totalLocal / totalAvail;
+    return Glass(
+      radius: 26,
+      padding: const EdgeInsets.all(22),
+      borderColor: AppColors.gold.withOpacity(0.5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.download_for_offline_rounded, color: AppColors.gold, size: 40),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('تحميل كل حاجة للأوفلاين',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+                    Text(
+                      running
+                          ? 'بيحمّل دلوقتي: ${lib.everythingCurrent ?? '...'}'
+                          : 'كل المصاحف + الرقية — تقريبًا 15–20 جيجا، الأفضل على واي فاي',
+                      style: const TextStyle(color: AppColors.muted, fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+              running
+                  ? GlassButton(
+                      icon: Icons.stop_rounded,
+                      label: 'إيقاف',
+                      size: 64,
+                      onTap: lib.stopEverything)
+                  : GlassButton(
+                      icon: Icons.download_rounded,
+                      label: frac >= 1 ? 'كله متحمل ✓' : 'ابدأ التحميل',
+                      size: 64,
+                      primary: frac < 1,
+                      onTap: frac >= 1 ? null : lib.downloadEverything),
+            ],
+          ),
+          const SizedBox(height: 14),
+          LinearProgressIndicator(
+            value: frac,
+            minHeight: 8,
+            borderRadius: BorderRadius.circular(8),
+            color: AppColors.emerald,
+            backgroundColor: Colors.white12,
+          ),
+          const SizedBox(height: 6),
+          Text('$totalLocal من $totalAvail سورة على الجهاز',
+              style: const TextStyle(color: AppColors.muted, fontSize: 15)),
         ],
       ),
     );

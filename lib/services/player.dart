@@ -10,6 +10,7 @@ import '../data/ruqyah.dart';
 import '../data/surahs.dart';
 import 'library.dart';
 import 'settings.dart';
+import 'sources.dart';
 
 enum PlayKind { none, quran, ruqyahAyat, ruqyahTracks }
 
@@ -73,12 +74,12 @@ class Player extends ChangeNotifier {
   Future<bool> playQuran(Reciter r, int surahNo,
       {Duration position = Duration.zero, bool autoplay = true}) async {
     final lib = Library.instance;
-    final m = lib.activeMoshaf(r);
-    final stream = Settings.instance.allowStreaming && m != null;
+    final stream = Settings.instance.allowStreaming;
     final order = <int>[];
     final sources = <AudioSource>[];
     for (var n = 1; n <= 114; n++) {
       final f = lib.localFile(r, n);
+      final urls = Sources.instance.urlsFor(r.id, n);
       final item = MediaItem(
         id: 'q_${r.id}_$n',
         title: 'سورة ${surah(n).name}',
@@ -89,9 +90,9 @@ class Player extends ChangeNotifier {
       if (f != null) {
         order.add(n);
         sources.add(AudioSource.file(f.path, tag: item));
-      } else if (stream && m!.surahs.contains(n)) {
+      } else if (stream && urls.isNotEmpty) {
         order.add(n);
-        sources.add(AudioSource.uri(Uri.parse(m!.urlFor(n)), tag: item));
+        sources.add(AudioSource.uri(Uri.parse(urls.first), tag: item));
       }
     }
     final idx = order.indexOf(surahNo);
@@ -141,24 +142,33 @@ class Player extends ChangeNotifier {
 
   Future<bool> playRuqyahTracks(RuqyahSheikh s,
       {int index = 0, Duration position = Duration.zero, bool autoplay = true}) async {
-    final files = Library.instance.ruqyahTracks(s);
-    if (files.isEmpty) return false;
-    final sources = <AudioSource>[
-      for (var i = 0; i < files.length; i++)
-        AudioSource.file(files[i].path,
-            tag: MediaItem(
-              id: 'rt_${s.id}_$i',
-              title: trackTitle(files[i]),
-              artist: 'الرقية الشرعية — ${s.name}',
-              album: 'الرقية الشرعية',
-            )),
-    ];
+    final lib = Library.instance;
+    final stream = Settings.instance.allowStreaming;
+    final sources = <AudioSource>[];
+    final remote = Sources.instance.ruqyahTracks(s.id);
+    var start = 0;
+    for (var i = 0; i < remote.length; i++) {
+      final t = remote[i];
+      final f = lib.localTrack(s, t);
+      if (f == null && !stream) continue;
+      if (i == index) start = sources.length;
+      final tag = MediaItem(
+        id: 'rt_${s.id}_$i',
+        title: t.title,
+        artist: 'الرقية الشرعية — ${s.name}',
+        album: 'الرقية الشرعية',
+      );
+      sources.add(f != null
+          ? AudioSource.file(f.path, tag: tag)
+          : AudioSource.uri(Uri.parse(t.url), tag: tag));
+    }
+    if (sources.isEmpty) return false;
     kind = PlayKind.ruqyahTracks;
     sheikhId = s.id;
     reciterId = null;
     artLetters = 'رقية';
     await audio.setAudioSource(ConcatenatingAudioSource(children: sources),
-        initialIndex: index.clamp(0, sources.length - 1).toInt(), initialPosition: position);
+        initialIndex: start, initialPosition: position);
     if (autoplay) unawaited(audio.play());
     notifyListeners();
     return true;
