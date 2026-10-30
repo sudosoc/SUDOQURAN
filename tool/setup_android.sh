@@ -6,6 +6,9 @@ if [ ! -d android ]; then
   flutter create --platforms=android --org com.sudosoc --project-name sudoquran .
 fi
 cp -r android_overrides/. android/
+# One fixed signing key for every build, so new APKs install over old ones.
+mkdir -p "$HOME/.android"
+cp android_overrides/signing/sudoquran.keystore "$HOME/.android/debug.keystore"
 # remove the template's Java MainActivity if one was generated
 find android/app/src/main -name 'MainActivity.java' -delete || true
 flutter pub get
