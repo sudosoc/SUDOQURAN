@@ -37,14 +37,14 @@ RECITERS = [
     ("binhameed", ["طالب", "حميد"], ['"أحمد بن طالب"', '"ahmad bin talib"', '"ahmed talib hameed"', '"ahmad talib bin humaid"'], ["talib"]),
     ("ghamdi", ["سعد", "الغامدي"], ['"سعد الغامدي"', 'ghamdi'], ["ghamdi"]),
     ("afasy", ["مشاري"], ['"مشاري العفاسي"', 'alafasy'], ["afasy"]),
-    ("alhaj", ["عبدالرحمن", "الحاج"], ['"عبدالرحمن الحاج"', '"عبد الرحمن الحاج"', '"abdulrahman al haj"', '"abdul rahman al-haj"'], []),
+    ("alhaj", ["عبدالرحمن", "الحاج"], ['"عبدالرحمن الحاج"', '"عبد الرحمن الحاج"', 'عبدالرحمن الحاج قرآن', '"abdulrahman al haj"', '"abdul rahman al-haj"', '"abdelrahman elhag"', '"abdulrahman alhaj"'], []),
     ("dawas", ["الدعوس"], ['"ماجد الدعوس"', 'الدعوس', '"majed al-dawas"', '"majed aldawas"'], []),
     ("islamsobhi", ["اسلام", "صبحي"], ['"إسلام صبحي"', '"اسلام صبحي"', '"islam sobhi"', '"islam sobhy"'], ["sobhi"]),
     ("shamsan", ["الشمسان"], ['"وليد الشمسان"', 'الشمسان', '"waleed al-shamsan"', '"walid alshamsan"'], []),
     ("tablawi", ["الطبلاوي"], ['"محمد محمود الطبلاوي"', 'tablawi'], ["tablawi", "tablaway"]),
     ("nasr", ["نصر"], ['"أحمد عبد الرازق نصر"', '"احمد عبدالرازق نصر"', '"أحمد نصر" قرآن', '"ahmed nasr" quran'], []),
     ("dosari", ["ياسر", "الدوسري"], ['"ياسر الدوسري"', 'dossary', 'dosari'], ["dossary", "dosari", "dussary"]),
-    ("ghazi", ["بلال", "الغازي"], ['"بلال الغازي"', '"bilal al-ghazi"', '"bilal alghazi"', '"bilal ghazi"'], []),
+    ("ghazi", ["بلال", "غازي"], ['"بلال الغازي"', '"بلال غازي"', 'بلال غازي', '"bilal ghazi"', 'bilal ghazi quran', '"ghazi bilal"', '"bilal elghazi"'], []),
     ("basit", ["عبدالباسط"], ['"عبد الباسط عبد الصمد"', '"abdul basit" murattal'], ["abdul basit", "abdulbaset", "abdul baset"]),
     ("omarali", ["عمرعلي"], ['"عمر علي" قرآن', '"القارئ عمر علي"', '"omar ali" quran'], []),
 ]
@@ -56,25 +56,25 @@ ARCHIVE_GUARD = {
     "banna": ["البنا", "banna"],
     "maher": ["معيقلي", "muaiql", "maher"],
     "binhameed": ["حميد", "humaid", "hameed", "humeid"],
-    "ghamdi": ["غامدي", "ghamd"],
+    "ghamdi": ["سعدالغامدي", "saad", "sa3d", "saadelghamd", "سعد"],
     "afasy": ["عفاسي", "afasy", "alafasi", "afasi"],
     "alhaj": ["الحاج", "alhaj", "al-haj", "elhag", "alhag"],
     "dawas": ["دعوس", "dawas", "daws", "dawwas"],
     "islamsobhi": ["صبحي", "sobhi", "sobhy", "subhi"],
     "shamsan": ["شمسان", "shamsan"],
     "tablawi": ["طبلاوي", "tablaw"],
-    "nasr": ["نصر", "nasr"],
+    "nasr": ["عبدالرازق", "عبدالرزاق", "abdelrazek", "abdulrazaq", "abdel razek", "abdulrazzaq"],
     "dosari": ["دوسري", "dosar", "dossar", "dussar", "dawsar"],
-    "ghazi": ["غازي", "ghazi"],
+    "ghazi": ["بلالغازي", "بلالالغازي", "bilalghazi", "ghazibilal", "bilal ghazi", "bilal_ghazi", "bilal-ghazi", "elghazi"],
     "basit": ["باسط", "basit", "baset", "basset"],
     "omarali": ["عمرعلي", "omarali", "omar ali", "omar_ali"],
 }
 
 RUQYAH = [
-    ("maher", ["الرقية", "رقية", "ruqyah", "ruqya", "roqya"], ["معيقلي", "muaiql", "maher"],
+    ("maher", ["الرقية", "الرقيه", "رقية", "رقيه", "ruqyah", "ruqya", "roqya", "roqia", "roquia"], ["معيقلي", "muaiql", "maher", "meaqli"],
      ['"الرقية الشرعية" المعيقلي', 'ruqyah muaiqly', 'رقية ماهر المعيقلي']),
-    ("hassan_saleh", ["الرقية", "رقية", "ruqyah", "ruqya", "roqya"], ["حسن صالح", "حسنصالح", "hassan saleh", "hasan salih", "hassansaleh", "hassan_saleh"],
-     ['"حسن صالح" رقية', '"الرقية الشرعية" "حسن صالح"', '"hassan saleh" ruqyah', 'رقية حسن صالح']),
+    ("hassan_saleh", ["الرقية", "الرقيه", "رقية", "رقيه", "ruqyah", "ruqya", "roqya", "roqia"], ["حسن صالح", "حسنصالح", "hassan saleh", "hasan salih", "hassansaleh", "hassan_saleh"],
+     ['"حسن صالح" رقية', '"الرقية الشرعية" "حسن صالح"', '"hassan saleh" ruqyah', 'رقية حسن صالح', '"حسن صالح"', 'الرقية الشرعية']),
 ]
 
 SURAH_NAMES_AR = """الفاتحة البقرة آل_عمران النساء المائدة الأنعام الأعراف الأنفال التوبة يونس هود يوسف الرعد إبراهيم الحجر النحل الإسراء الكهف مريم طه الأنبياء الحج المؤمنون النور الفرقان الشعراء النمل القصص العنكبوت الروم لقمان السجدة الأحزاب سبأ فاطر يس الصافات ص الزمر غافر فصلت الشورى الزخرف الدخان الجاثية الأحقاف محمد الفتح الحجرات ق الذاريات الطور النجم القمر الرحمن الواقعة الحديد المجادلة الحشر الممتحنة الصف الجمعة المنافقون التغابن الطلاق التحريم الملك القلم الحاقة المعارج نوح الجن المزمل المدثر القيامة الإنسان المرسلات النبأ النازعات عبس التكوير الانفطار المطففين الانشقاق البروج الطارق الأعلى الغاشية الفجر البلد الشمس الليل الضحى الشرح التين العلق القدر البينة الزلزلة العاديات القارعة التكاثر العصر الهمزة الفيل قريش الماعون الكوثر الكافرون النصر المسد الإخلاص الفلق الناس""".split()
@@ -97,31 +97,45 @@ def norm(s: str) -> str:
 SURAH_NORM_AR = [norm(n) for n in SURAH_NAMES_AR]
 
 
-def detect_surah(filename: str):
-    base = urllib.parse.unquote(filename).rsplit("/", 1)[-1]
-    stem = base.rsplit(".", 1)[0]
-    # leading number is the strongest signal: "001", "18 - الكهف", "Surah_018"
-    for m in re.finditer(r"(?<!\d)(\d{1,3})(?!\d)", stem):
-        n = int(m.group(1))
-        if 1 <= n <= 114:
-            return n
-    n_ar = norm(stem)
+PERSON_NAMES = {norm(x) for x in ["محمد", "إبراهيم", "يوسف", "نوح", "هود", "لقمان", "مريم", "يونس"]}
+
+
+def _name_surah(stem):
+    """Surah from its name, only when written as 'سورة X' / 'surah X' or at the start."""
+    lead = re.sub(r"^[\d\s._\-]+", "", stem)
+    n_ar = norm(lead)
     best = None
     for i, sn in enumerate(SURAH_NORM_AR):
-        if len(sn) < 3:
+        if len(sn) < 2:
             continue
-        if sn in n_ar and (best is None or len(sn) > len(SURAH_NORM_AR[best])):
+        starts = sn not in PERSON_NAMES and (n_ar.startswith(sn) or (len(sn) >= 4 and n_ar.startswith("ال" + sn)))
+        hit = ("سوره" + sn) in n_ar or starts
+        if hit and (best is None or len(sn) > len(SURAH_NORM_AR[best])):
             best = i
     if best is not None:
         return best + 1
-    low = re.sub(r"[^a-z]", "", stem.lower())
-    best = None
-    for i, en in enumerate(SURAH_NAMES_EN):
-        if len(en) < 4:
+    low = re.sub(r"[^a-z]", "", lead.lower())
+    for i, en in sorted(enumerate(SURAH_NAMES_EN), key=lambda x: -len(x[1])):
+        if len(en) < 3:
             continue
-        if en in low and (best is None or len(en) > len(SURAH_NAMES_EN[best])):
-            best = i
-    return best + 1 if best is not None else None
+        if re.search(r"(surah|sura|surat|soorah)(al|an|ar|as|at|ad|adh|az|ash)?" + en, low) or low.startswith(en) or low.startswith("al" + en):
+            return i + 1
+    return None
+
+
+def detect_surah(filename: str):
+    base = urllib.parse.unquote(filename).rsplit("/", 1)[-1]
+    stem = base.rsplit(".", 1)[0]
+    num = None
+    for m in re.finditer(r"(?<!\d)(\d{1,3})(?!\d)", stem):
+        n = int(m.group(1))
+        if 1 <= n <= 114:
+            num = n
+            break
+    name = _name_surah(stem)
+    if name and num and name != num:
+        return name
+    return num or name
 
 
 def get_json(url, timeout=40, tries=3):
@@ -233,6 +247,26 @@ def archive_files(identifier):
     return files, title
 
 
+# Items whose files are NOT one-file-per-surah of a Hafs murattal recitation.
+EXCLUDE = ["جزء", "اجزاء", "juz", "parts", "ربع", "ارباع", "رباع", "hizb", "حزب", "خطب", "خطبه", "khutba",
+           "تراويح", "تهجد", "taraweeh", "tarawih", "قيام", "ليله", "رمضان", "ramadan", "مجود", "mujawwad",
+           "mojawwad", "mujawad", "ذكوان", "ورش", "warsh", "قالون", "qalun", "qaloon", "شعبه", "shubah",
+           "الدوري", "douri", "duri", "السوسي", "susi", "تفسير", "tafsir", "ترجمه", "translation", "english",
+           "محاضره", "درس", "lecture", "دعاء", "تعليم", "معلم", "muallim", "teacher", "اطفال", "kids", "صلاه",
+           "نصرالله", "nasrallah", "العريقي", "areeqi", "ياسرحامد"]
+GOOD = ["كامل", "كاملا", "full", "complete", "114", "مصحف", "المصحف", "murattal", "مرتل", "quran"]
+
+
+def excluded(text):
+    t, low = norm(text), text.lower()
+    return any((norm(x) and norm(x) in t) or x in low for x in EXCLUDE)
+
+
+def quality(text):
+    t, low = norm(text), text.lower()
+    return sum(1 for g in GOOD if norm(g) in t or g in low)
+
+
 def guard_ok(rid, text):
     t = norm(text)
     low = text.lower()
@@ -248,67 +282,79 @@ def from_archive(rid, queries):
 
     def inspect(identifier):
         files, title = archive_files(identifier)
-        if not guard_ok(rid, f"{identifier} {title}"):
+        if not guard_ok(rid, f"{identifier} {title}") or excluded(f"{identifier} {title}"):
             return None
         mapping = {}
         for name, size in files:
             if size and size < 50_000:
+                continue
+            if excluded(name):
                 continue
             n = detect_surah(name)
             if n and (n not in mapping or size > mapping[n][1]):
                 mapping[n] = (name, size)
         if not mapping:
             return None
-        return identifier, title, {n: f"https://archive.org/download/{urllib.parse.quote(identifier)}/{urllib.parse.quote(nm)}" for n, (nm, _) in mapping.items()}
+        return identifier, title, quality(f"{identifier} {title}"), {n: f"https://archive.org/download/{urllib.parse.quote(identifier)}/{urllib.parse.quote(nm)}" for n, (nm, _) in mapping.items()}
 
     with cf.ThreadPoolExecutor(8) as ex:
         for res in ex.map(inspect, list(ids)[:60]):
             if res:
                 items.append(res)
-    items.sort(key=lambda x: -len(x[2]))
-    return items
+    # full, clearly-labelled collections first; then by coverage
+    items.sort(key=lambda x: (-(len(x[3]) >= 100), -x[2], -len(x[3])))
+    return [(i, t, m) for i, t, _, m in items]
 
 
 # ---------------------------------------------------------------- ruqyah
-def ruqyah_from_archive(rid, must_any, guard, queries):
+def ruqyah_all():
+    """Search every ruqyah query, then assign each file to a sheikh by its own name."""
     ids = {}
-    for q in queries:
-        for d in archive_search(q, rows=30):
-            ids.setdefault(d["identifier"], d)
-    tracks = []
+    for _, _, _, queries in RUQYAH:
+        for q in queries:
+            for d in archive_search(q, rows=30):
+                ids.setdefault(d["identifier"], d)
+    out = {rid: [] for rid, *_ in RUQYAH}
 
     def inspect(identifier):
         files, title = archive_files(identifier)
         found = []
         for name, size in files:
-            full = f"{identifier} {title} {name}"
-            n = norm(full)
-            low = full.lower()
-            if not any(norm(m) in n or m in low for m in must_any):
+            if size and size < 3_000_000:   # skip short clips
                 continue
-            if not any(norm(g) in n or g in low for g in guard):
-                continue
-            if size and size < 300_000:
-                continue
-            found.append({
-                "title": urllib.parse.unquote(name.rsplit("/", 1)[-1].rsplit(".", 1)[0]).replace("_", " "),
-                "url": f"https://archive.org/download/{urllib.parse.quote(identifier)}/{urllib.parse.quote(name)}",
-                "size": size,
-            })
+            fname = urllib.parse.unquote(name.rsplit("/", 1)[-1])
+            full = f"{identifier} {title} {fname}"
+            nf, lf = norm(full), full.lower()
+            nfile, lfile = norm(fname), fname.lower()
+            for rid, must_any, guard, _ in RUQYAH:
+                if not any(norm(m) in nf or m in lf for m in must_any):
+                    continue
+                # the sheikh's name must be in the FILE name, unless the whole
+                # item is clearly his and has a single ruqyah file
+                in_file = any(norm(g) in nfile or g in lfile for g in guard)
+                if not in_file:
+                    continue
+                found.append((rid, {
+                    "title": fname.rsplit(".", 1)[0].replace("_", " ").strip(),
+                    "url": f"https://archive.org/download/{urllib.parse.quote(identifier)}/{urllib.parse.quote(name)}",
+                    "size": size,
+                }))
         return found
 
     with cf.ThreadPoolExecutor(8) as ex:
-        for res in ex.map(inspect, list(ids)[:40]):
-            tracks.extend(res)
-    # dedupe by size+title, keep reasonable count
-    seen, out = set(), []
-    for t in sorted(tracks, key=lambda t: -t["size"]):
-        key = (t["title"], t["size"] // 100_000)
-        if key in seen:
-            continue
-        seen.add(key)
-        out.append(t)
-    return out[:12]
+        for res in ex.map(inspect, list(ids)[:60]):
+            for rid, t in res:
+                out[rid].append(t)
+    for rid in out:
+        seen, keep = set(), []
+        for t in sorted(out[rid], key=lambda t: -t["size"]):
+            key = t["size"] // 1_500_000
+            if key in seen:
+                continue
+            seen.add(key)
+            keep.append(t)
+        out[rid] = keep[:8]
+    return out
 
 
 # ------------------------------------------------------------------ main
@@ -333,7 +379,7 @@ def main():
                 per[n].append(f"{base}{n:03d}.mp3")
             lines.append(f"- quranicaudio: {name} → {base}")
         arch = from_archive(rid, queries)
-        for identifier, title, mapping in arch[:4]:
+        for identifier, title, mapping in arch[:8]:
             for n, u in mapping.items():
                 per[n].append(u)
             lines.append(f"- archive.org: `{identifier}` — {title} ({len(mapping)} surahs)")
@@ -362,8 +408,9 @@ def main():
         report.append("")
         print(f"   {verified}/114 verified", flush=True)
 
-    for rid, must_any, guard, queries in RUQYAH:
-        tr = ruqyah_from_archive(rid, must_any, guard, queries)
+    all_ruqyah = ruqyah_all()
+    for rid, *_ in RUQYAH:
+        tr = all_ruqyah[rid]
         good = []
         with cf.ThreadPoolExecutor(8) as ex:
             for t, g in zip(tr, ex.map(lambda t: check_audio(t["url"]), tr)):

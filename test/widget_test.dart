@@ -1,11 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sudoquran/services/library.dart';
+import 'package:sudoquran/data/surahs.dart';
 
 void main() {
-  test('detects surah numbers from file names', () {
-    expect(Library.detectSurah('001.mp3'), 1);
-    expect(Library.detectSurah('018 سورة الكهف.mp3'), 18);
-    expect(Library.detectSurah('سورة الكهف - ماهر.mp3'), 18);
-    expect(Library.detectSurah('random.mp3'), null);
+  test('surah table is complete', () {
+    expect(surahs.length, 114);
+    expect(surahs.fold<int>(0, (a, s) => a + s.ayahs), 6236);
   });
 }
