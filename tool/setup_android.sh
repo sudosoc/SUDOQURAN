@@ -9,6 +9,7 @@ cp -r android_overrides/. android/
 # One fixed signing key for every build, so new APKs install over old ones.
 mkdir -p "$HOME/.android"
 cp android_overrides/signing/sudoquran.keystore "$HOME/.android/debug.keystore"
+python3 tool/patch_signing.py
 # remove the template's Java MainActivity if one was generated
 find android/app/src/main -name 'MainActivity.java' -delete || true
 flutter pub get
