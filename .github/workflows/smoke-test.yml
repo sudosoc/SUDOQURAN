@@ -47,13 +47,16 @@ jobs:
       - name: Push smoke logs
         if: always()
         run: |
-          mkdir -p /tmp/smoke && cp -r smoke/. /tmp/smoke/ 2>/dev/null || true
+          mkdir -p /tmp/smoke
+          cp smoke/logcat.txt smoke/pid.txt smoke/install.txt smoke/screen1.png smoke/screen2.png /tmp/smoke/ 2>/dev/null || true
+          tail -c 20000 smoke/emulator_setup.txt > /tmp/smoke/emulator_setup_tail.txt 2>/dev/null || true
+          tail -c 8000 smoke/emulator_log.txt > /tmp/smoke/emulator_log_tail.txt 2>/dev/null || true
+          grep -E "AndroidRuntime|FATAL|F DEBUG|F libc|backtrace|#[0-9]+ pc|Abort|SIGSEGV|SIGABRT|sudoquran|flutter" smoke/logcat_full.txt | head -600 > /tmp/smoke/crash.txt 2>/dev/null || true
+          ls -la /tmp/smoke
           git config user.name "sudoquran-bot"
           git config user.email "actions@users.noreply.github.com"
-          git checkout --orphan smoke-tmp
-          git rm -rf --cached . >/dev/null
-          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-          cp -r /tmp/smoke/. . 2>/dev/null || echo none > none.txt
-          rm -f logcat_full.txt.gz; gzip -f logcat_full.txt 2>/dev/null || true
+          cd /tmp/smoke
+          git init -q -b smoke-logs
           echo "${{ github.sha }} $(date -u)" > RUN.txt
-          git add -A && git commit -qm "smoke logs" && git push -f origin HEAD:smoke-logs
+          git add -A && git -c user.name=bot -c user.email=bot@x commit -qm "smoke logs"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" smoke-logs:smoke-logs
