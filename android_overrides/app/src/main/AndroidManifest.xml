@@ -11,7 +11,7 @@
 
     <application
         android:label="القرآن الكريم"
-        android:name="${applicationName}"
+        android:name=".SudoApp"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true">
@@ -52,6 +52,12 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".CrashActivity"
+            android:exported="false"
+            android:process=":crash"
+            android:theme="@android:style/Theme.Material.NoActionBar"/>
 
         <!-- Home-screen widget -->
         <receiver

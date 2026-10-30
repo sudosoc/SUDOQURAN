@@ -6,10 +6,13 @@ set -x
 SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
 BIN="$SDK/cmdline-tools/latest/bin"
 ls "$SDK" "$SDK/cmdline-tools" || true
+export ANDROID_AVD_HOME="$HOME/.android/avd"; mkdir -p "$ANDROID_AVD_HOME"
+export ANDROID_SDK_ROOT="$SDK"
 IMG="system-images;android-33;google_apis;x86_64"
 df -h / ; yes | "$BIN/sdkmanager" --install "emulator" "platform-tools" "$IMG" > smoke/sdkmanager.txt 2>&1
 echo "sdkmanager exit $?"
 echo no | "$BIN/avdmanager" create avd -n smoke -k "$IMG" -d pixel_6 --force
+ls -la "$ANDROID_AVD_HOME"; "$SDK/emulator/emulator" -list-avds
 "$SDK/emulator/emulator" -avd smoke -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot \
   -memory 4096 > smoke/emulator_log.txt 2>&1 &
 ADB="$SDK/platform-tools/adb"
