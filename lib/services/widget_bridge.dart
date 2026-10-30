@@ -1,7 +1,8 @@
-import 'package:home_widget/home_widget.dart';
+import 'package:flutter/services.dart';
 
-/// Pushes "now playing" to the Android home-screen widget.
+/// Pushes "now playing" to the native home-screen widget (no extra plugins).
 class HomeWidgetBridge {
+  static const _ch = MethodChannel('sudoquran/widget');
   static String _last = '';
 
   static Future<void> update(String title, String subtitle, bool playing) async {
@@ -9,12 +10,13 @@ class HomeWidgetBridge {
     if (sig == _last) return;
     _last = sig;
     try {
-      await HomeWidget.saveWidgetData<String>('title', title.isEmpty ? 'القرآن الكريم' : title);
-      await HomeWidget.saveWidgetData<String>('subtitle', subtitle.isEmpty ? 'اضغط للتشغيل' : subtitle);
-      await HomeWidget.saveWidgetData<bool>('playing', playing);
-      await HomeWidget.updateWidget(
-        qualifiedAndroidName: 'com.sudosoc.sudoquran.QuranWidgetProvider',
-      );
-    } catch (_) {}
+      await _ch.invokeMethod('update', {
+        'title': title.isEmpty ? 'القرآن الكريم' : title,
+        'subtitle': subtitle.isEmpty ? 'اضغط للتشغيل' : subtitle,
+        'playing': playing,
+      });
+    } catch (_) {
+      _last = '';
+    }
   }
 }

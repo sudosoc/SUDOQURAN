@@ -71,6 +71,12 @@
                 android:resource="@xml/quran_widget_info"/>
         </receiver>
 
+        <!-- Not needed (gallery only); keeps app start free of extra providers -->
+        <provider
+            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+            android:authorities="${applicationId}.flutter.image_provider"
+            tools:node="remove"/>
+
         <meta-data android:name="flutterEmbedding" android:value="2"/>
     </application>
 

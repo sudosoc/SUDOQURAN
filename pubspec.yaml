@@ -17,7 +17,6 @@ dependencies:
   shared_preferences: ^2.3.2
   http: ^1.2.2
   permission_handler: ^11.3.1
-  home_widget: ^0.7.0
   image_picker: ^1.1.2
   url_launcher: ^6.3.0
 

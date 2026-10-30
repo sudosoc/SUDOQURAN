@@ -41,8 +41,8 @@ jobs:
       - name: Analyze
         run: flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee analyze.log; exit ${PIPESTATUS[0]}
 
-      - name: Build release APK (arm64)
-        run: flutter build apk --release --target-platform android-arm64 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+      - name: Build release APK (arm + arm64)
+        run: flutter build apk --release --target-platform android-arm,android-arm64 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
 
       - name: Rename APK
         run: cp build/app/outputs/flutter-apk/app-release.apk SUDOQURAN.apk
