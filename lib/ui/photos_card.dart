@@ -1,5 +1,5 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../data/owners.dart';
 import '../data/reciters.dart';
@@ -8,10 +8,9 @@ import '../services/library.dart';
 import 'glass.dart';
 
 Future<void> pickPhotoFor(BuildContext context, String id) async {
-  final res = await FilePicker.platform.pickFiles(type: FileType.image);
-  final path = res?.files.single.path;
-  if (path == null) return;
-  await Library.instance.setPhoto(id, path);
+  final img = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 600, imageQuality: 90);
+  if (img == null) return;
+  await Library.instance.setPhoto(id, img.path);
   if (context.mounted) toast(context, 'اتحطت صورة ${ownerName(id)} ✓');
 }
 
