@@ -47,6 +47,7 @@ RECITERS = [
     ("ghazi", ["بلال", "غازي"], ['"بلال الغازي"', '"بلال غازي"', 'بلال غازي', '"bilal ghazi"', 'bilal ghazi quran', '"ghazi bilal"', '"bilal elghazi"'], []),
     ("basit", ["عبدالباسط"], ['"عبد الباسط عبد الصمد"', '"abdul basit" murattal'], ["abdul basit", "abdulbaset", "abdul baset"]),
     ("omarali", ["عمرعلي"], ['"عمر علي" قرآن', '"القارئ عمر علي"', '"omar ali" quran'], []),
+    ("anas", ["انس", "عبدالستار"], ['"أنس عبد الستار"', '"انس عبدالستار"', '"انس عبد الستار"', '"anas abdelsattar"', '"anas abdul sattar"', '"anas abd el sattar"'], []),
 ]
 
 # extra reciter name tokens that MUST appear in an archive.org title/identifier
@@ -68,6 +69,7 @@ ARCHIVE_GUARD = {
     "ghazi": ["بلالغازي", "بلالالغازي", "bilalghazi", "ghazibilal", "bilal ghazi", "bilal_ghazi", "bilal-ghazi", "elghazi"],
     "basit": ["باسط", "basit", "baset", "basset"],
     "omarali": ["عمرعلي", "omarali", "omar ali", "omar_ali"],
+    "anas": ["انسعبدالستار", "انسعبد", "abdelsattar", "abdulsattar", "abd el sattar", "abdel sattar"],
 }
 
 RUQYAH = [
@@ -364,6 +366,83 @@ def ruqyah_all():
     return out
 
 
+# ---------------------------------------------------------------- azkar
+AZKAR_NAMES = {
+    "minshawi": "المنشاوي", "banna": "محمود علي البنا", "maher": "ماهر المعيقلي", "binhameed": "أحمد بن حميد",
+    "ghamdi": "سعد الغامدي", "afasy": "مشاري العفاسي", "alhaj": "عبدالرحمن الحاج", "dawas": "ماجد الدعوس",
+    "islamsobhi": "إسلام صبحي", "shamsan": "الشمسان", "tablawi": "الطبلاوي", "nasr": "أحمد عبدالرازق نصر",
+    "dosari": "ياسر الدوسري", "ghazi": "بلال غازي", "basit": "عبد الباسط", "omarali": "عمر علي",
+    "anas": "أنس عبد الستار", "hassan_saleh": "حسن صالح",
+}
+AZKAR_GUARD = dict(ARCHIVE_GUARD)
+AZKAR_GUARD["hassan_saleh"] = ["حسنصالح", "hassan saleh", "hassansaleh", "hassan_saleh"]
+AZKAR_GUARD["maher"] = ["معيقلي", "muaiql", "meaqli"]
+AZKAR_WORDS = ["اذكار", "ازكار", "azkar", "adhkar", "athkar", "azkaar"]
+MORNING = ["صباح", "morning", "sabah"]
+EVENING = ["مساء", "المسا", "evening", "masa"]
+
+
+def azkar_all():
+    ids = {}
+    queries = ['"أذكار الصباح والمساء"', '"أذكار الصباح"', '"أذكار المساء"', 'adhkar morning evening', 'azkar sabah masaa']
+    for name in AZKAR_NAMES.values():
+        queries += [f'"أذكار الصباح" "{name}"', f'"أذكار المساء" "{name}"', f'أذكار {name}']
+    for q in queries:
+        for d in archive_search(q, rows=25):
+            ids.setdefault(d["identifier"], d)
+    out = {rid: {"morning": [], "evening": []} for rid in AZKAR_NAMES}
+
+    def inspect(identifier):
+        files, title = archive_files(identifier)
+        found = []
+        for name, size in files:
+            if size and size < 1_000_000:
+                continue
+            fname = urllib.parse.unquote(name.rsplit("/", 1)[-1])
+            full = f"{identifier} {title} {fname}"
+            nf, lf = norm(full), full.lower()
+            if not any(norm(w) in nf or w in lf for w in AZKAR_WORDS):
+                continue
+            nfile, lfile = norm(fname), fname.lower()
+            # time of day: prefer the file name, fall back to the item
+            m_file = any(norm(w) in nfile or w in lfile for w in MORNING)
+            e_file = any(norm(w) in nfile or w in lfile for w in EVENING)
+            if not (m_file or e_file):
+                m_file = any(norm(w) in nf or w in lf for w in MORNING)
+                e_file = any(norm(w) in nf or w in lf for w in EVENING)
+            if not (m_file or e_file):
+                continue
+            owners = [rid for rid, g in AZKAR_GUARD.items() if any(norm(x) in nf or x in lf for x in g)]
+            if len(owners) != 1:
+                continue
+            track = {
+                "title": fname.rsplit(".", 1)[0].replace("_", " ").strip(),
+                "url": f"https://archive.org/download/{urllib.parse.quote(identifier)}/{urllib.parse.quote(name)}",
+                "size": size,
+            }
+            if m_file:
+                found.append((owners[0], "morning", track))
+            if e_file:
+                found.append((owners[0], "evening", track))
+        return found
+
+    with cf.ThreadPoolExecutor(8) as ex:
+        for res in ex.map(inspect, list(ids)[:250]):
+            for rid, when, t in res:
+                out[rid][when].append(t)
+    for rid in out:
+        for when in out[rid]:
+            seen, keep = set(), []
+            for t in sorted(out[rid][when], key=lambda t: -t["size"]):
+                key = t["size"] // 500_000
+                if key in seen:
+                    continue
+                seen.add(key)
+                keep.append(t)
+            out[rid][when] = keep[:3]
+    return out
+
+
 # ------------------------------------------------------------------ main
 def main():
     report = ["# Sources report", ""]
@@ -428,6 +507,21 @@ def main():
         for t in good:
             report.append(f"- {t['title']} ({t['size'] // 1_000_000} MB) — {t['url']}")
         report.append("")
+
+    result["azkar"] = {}
+    az = azkar_all()
+    report.append("## azkar")
+    for rid, d in az.items():
+        clean = {}
+        for when, tr in d.items():
+            with cf.ThreadPoolExecutor(8) as ex:
+                good = [t for t, g in zip(tr, ex.map(lambda t: check_audio(t["url"]), tr)) if g]
+            if good:
+                clean[when] = good
+        if clean:
+            result["azkar"][rid] = clean
+            report.append(f"- {rid}: صباح {len(clean.get('morning', []))} · مساء {len(clean.get('evening', []))}")
+    report.append("")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
