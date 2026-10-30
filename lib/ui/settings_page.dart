@@ -4,7 +4,11 @@ import '../data/reciters.dart';
 import '../services/library.dart';
 import '../services/settings.dart';
 import '../services/sources.dart';
+import 'about_tab.dart';
+import 'downloads_page.dart';
 import 'glass.dart';
+import 'photos_card.dart';
+import 'themes_tab.dart';
 
 class SettingsSection extends StatefulWidget {
   const SettingsSection({super.key});
@@ -14,6 +18,108 @@ class SettingsSection extends StatefulWidget {
 }
 
 class _SettingsSectionState extends State<SettingsSection> {
+  static int _tab = 0;
+
+  static const _tabs = [
+    (Icons.tune_rounded, 'عام'),
+    (Icons.download_for_offline_rounded, 'إدارة التحميل'),
+    (Icons.palette_rounded, 'الثيمات'),
+    (Icons.person_rounded, 'عن المطور'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 4, 4, 16),
+          child: Row(
+            children: [
+              const Text('الإعدادات', style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900)),
+              const SizedBox(width: 24),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (var i = 0; i < _tabs.length; i++) ...[
+                        _TabChip(
+                          icon: _tabs[i].$1,
+                          label: _tabs[i].$2,
+                          selected: _tab == i,
+                          onTap: () => setState(() => _tab = i),
+                        ),
+                        const SizedBox(width: 10),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: IndexedStack(
+            index: _tab,
+            children: const [
+              _GeneralTab(),
+              DownloadsPage(),
+              ThemesTab(),
+              AboutTab(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TabChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  const _TabChip({required this.icon, required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(40),
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            color: selected ? AppColors.gold.withOpacity(0.2) : Colors.white.withOpacity(0.05),
+            border: Border.all(color: selected ? AppColors.gold : Colors.white.withOpacity(0.12), width: 1.5),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(icon, color: selected ? AppColors.gold : AppColors.muted, size: 26),
+            const SizedBox(width: 8),
+            Text(label,
+                style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
+                    color: selected ? AppColors.text : AppColors.muted)),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _GeneralTab extends StatefulWidget {
+  const _GeneralTab();
+
+  @override
+  State<_GeneralTab> createState() => _GeneralTabState();
+}
+
+class _GeneralTabState extends State<_GeneralTab> {
   Future<int>? _used;
 
   @override
@@ -32,10 +138,6 @@ class _SettingsSectionState extends State<SettingsSection> {
         return ListView(
           padding: const EdgeInsets.only(bottom: 20),
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(4, 4, 4, 16),
-              child: Text('الإعدادات', style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900)),
-            ),
             const _DownloadEverythingCard(),
             const SizedBox(height: 16),
             Glass(
@@ -60,6 +162,14 @@ class _SettingsSectionState extends State<SettingsSection> {
                   ),
                   const Divider(color: Colors.white12),
                   _SwitchRow(
+                    icon: Icons.directions_car_rounded,
+                    title: 'افتح على وضع السواقة',
+                    subtitle: 'أول ما التطبيق يفتح يدخل على الشاشة الكبيرة على طول',
+                    value: s.driveOnLaunch,
+                    onChanged: s.setDriveOnLaunch,
+                  ),
+                  const Divider(color: Colors.white12),
+                  _SwitchRow(
                     icon: Icons.play_circle_rounded,
                     title: 'استكمال التلاوة تلقائيًا',
                     subtitle: 'أول ما العربية تدور والتطبيق يفتح، يكمل من مكان ما وقف',
@@ -70,39 +180,7 @@ class _SettingsSectionState extends State<SettingsSection> {
               ),
             ),
             const SizedBox(height: 16),
-            Glass(
-              radius: 26,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.storage_rounded, color: AppColors.gold, size: 30),
-                      const SizedBox(width: 12),
-                      const Text('المساحة المستخدمة', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
-                      const Spacer(),
-                      FutureBuilder<int>(
-                        future: _used,
-                        builder: (context, snap) => Text(
-                          snap.hasData ? formatBytes(snap.data!) : '...',
-                          style: const TextStyle(fontSize: 22, color: AppColors.emerald),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      GlassButton(
-                        icon: Icons.refresh_rounded,
-                        size: 54,
-                        onTap: () => setState(() => _used = lib.usedBytes()),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  const Text('المصحف الكامل للقارئ الواحد حوالي 0.8–1.5 جيجا (المساحة عندك 128 جيجا)',
-                      style: TextStyle(color: AppColors.muted, fontSize: 16)),
-                ],
-              ),
-            ),
+            const PhotosCard(),
             const SizedBox(height: 16),
             Glass(
               radius: 26,
@@ -112,7 +190,7 @@ class _SettingsSectionState extends State<SettingsSection> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.cloud_sync_rounded, color: AppColors.gold, size: 30),
+                      Icon(Icons.cloud_sync_rounded, color: AppColors.gold, size: 30),
                       const SizedBox(width: 12),
                       const Expanded(
                         child: Text('مصادر التلاوات',
@@ -169,7 +247,7 @@ class _SettingsSectionState extends State<SettingsSection> {
                                       '${Sources.instance.labels[r.id] != null ? ' · ${Sources.instance.labels[r.id]}' : ''}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 15, color: AppColors.muted),
+                              style: TextStyle(fontSize: 15, color: AppColors.muted),
                             ),
                           ),
                         ],
@@ -217,7 +295,7 @@ class _SwitchRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w700)),
-                Text(subtitle, style: const TextStyle(fontSize: 15, color: AppColors.muted)),
+                Text(subtitle, style: TextStyle(fontSize: 15, color: AppColors.muted)),
               ],
             ),
           ),
@@ -256,7 +334,7 @@ class _DownloadEverythingCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.download_for_offline_rounded, color: AppColors.gold, size: 40),
+              Icon(Icons.download_for_offline_rounded, color: AppColors.gold, size: 40),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -268,7 +346,7 @@ class _DownloadEverythingCard extends StatelessWidget {
                       running
                           ? 'بيحمّل دلوقتي: ${lib.everythingCurrent ?? '...'}'
                           : 'كل المصاحف + الرقية — تقريبًا 15–20 جيجا، الأفضل على واي فاي',
-                      style: const TextStyle(color: AppColors.muted, fontSize: 16),
+                      style: TextStyle(color: AppColors.muted, fontSize: 16),
                     ),
                   ],
                 ),
@@ -297,7 +375,7 @@ class _DownloadEverythingCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text('$totalLocal من $totalAvail سورة على الجهاز',
-              style: const TextStyle(color: AppColors.muted, fontSize: 15)),
+              style: TextStyle(color: AppColors.muted, fontSize: 15)),
         ],
       ),
     );

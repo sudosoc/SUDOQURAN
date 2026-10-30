@@ -7,6 +7,7 @@ import '../services/player.dart';
 import '../services/settings.dart';
 import '../services/sources.dart';
 import 'glass.dart';
+import 'photos_card.dart';
 
 /// Quran section: reciter grid → surah grid (nested navigator keeps the
 /// player panel and side rail in place).
@@ -57,7 +58,7 @@ class ReciterGrid extends StatelessWidget {
                         style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900)),
                     const SizedBox(width: 14),
                     Text('${reciters.length} قارئ',
-                        style: const TextStyle(color: AppColors.muted, fontSize: 18)),
+                        style: TextStyle(color: AppColors.muted, fontSize: 18)),
                     const Spacer(),
                     if (last != null && (last['title'] as String?)?.isNotEmpty == true)
                       _ContinueChip(last: last),
@@ -104,12 +105,12 @@ class _ContinueChip extends StatelessWidget {
             border: Border.all(color: AppColors.emerald.withOpacity(0.5)),
           ),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.play_circle_fill_rounded, color: AppColors.emerald, size: 30),
+            Icon(Icons.play_circle_fill_rounded, color: AppColors.emerald, size: 30),
             const SizedBox(width: 10),
             Text('استكمال: ${last['title']}',
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
             Text('  ·  ${last['subtitle'] ?? ''}',
-                style: const TextStyle(fontSize: 16, color: AppColors.muted)),
+                style: TextStyle(fontSize: 16, color: AppColors.muted)),
           ]),
         ),
       ),
@@ -155,7 +156,7 @@ class _ReciterCard extends StatelessWidget {
           borderWidth: playingThis ? 2 : 1.2,
           child: Row(
             children: [
-              ReciterAvatar(reciter.initials, size: 74, glow: playingThis),
+              ReciterAvatar(reciter.initials, photoId: reciter.id, size: 74, glow: playingThis),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -168,7 +169,7 @@ class _ReciterCard extends StatelessWidget {
                         style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w800, height: 1.2)),
                     if (reciter.subtitle.isNotEmpty)
                       Text(reciter.subtitle,
-                          style: const TextStyle(fontSize: 15, color: AppColors.gold)),
+                          style: TextStyle(fontSize: 15, color: AppColors.gold)),
                     const SizedBox(height: 6),
                     Row(children: [
                       Icon(statusIcon, size: 18, color: statusColor),
@@ -234,7 +235,10 @@ class SurahGrid extends StatelessWidget {
                     children: [
                       GlassButton(icon: Icons.arrow_back_rounded, size: 60, onTap: onBack),
                       const SizedBox(width: 14),
-                      ReciterAvatar(reciter.initials, size: 60),
+                      GestureDetector(
+                        onTap: () => pickPhotoFor(context, reciter.id),
+                        child: ReciterAvatar(reciter.initials, photoId: reciter.id, size: 60),
+                      ),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(
@@ -250,7 +254,7 @@ class SurahGrid extends StatelessWidget {
                                   : avail.isEmpty
                                       ? 'لسه مفيش مصدر — المصادر بتتحدث تلقائيًا'
                                       : '${local.length} من ${avail.length} سورة على الجهاز${avail.length < 114 ? ' (المتاح أونلاين ${avail.length})' : ''}',
-                              style: const TextStyle(color: AppColors.muted, fontSize: 16),
+                              style: TextStyle(color: AppColors.muted, fontSize: 16),
                             ),
                           ],
                         ),
@@ -400,12 +404,12 @@ class _SurahTile extends StatelessWidget {
                       border: Border.all(color: AppColors.gold.withOpacity(0.6), width: 1.5),
                     ),
                     child: Text('${s.number}',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 15, color: AppColors.gold, fontWeight: FontWeight.w700)),
                   ),
                   const Spacer(),
                   playing
-                      ? const Icon(Icons.graphic_eq_rounded, color: AppColors.gold, size: 26)
+                      ? Icon(Icons.graphic_eq_rounded, color: AppColors.gold, size: 26)
                       : Icon(icon, color: iconColor, size: 22),
                 ],
               ),
@@ -415,7 +419,7 @@ class _SurahTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
               Text('${s.ayahs} آية · ${s.type}',
-                  style: const TextStyle(fontSize: 14, color: AppColors.muted)),
+                  style: TextStyle(fontSize: 14, color: AppColors.muted)),
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
@@ -116,6 +117,92 @@ class Library extends ChangeNotifier {
   }
 
   // --------------------------------------------------------------- ruqyah
+  Directory azkarDir(String ownerId) => Directory('${root.path}/azkar/$ownerId');
+  Directory get photosDir => Directory('${root.path}/photos');
+
+  File? photoFor(String id) {
+    final f = File('${photosDir.path}/$id.img');
+    return f.existsSync() ? f : null;
+  }
+
+  Future<void> setPhoto(String id, String sourcePath) async {
+    await photosDir.create(recursive: true);
+    await File(sourcePath).copy('${photosDir.path}/$id.img');
+    PaintingBinding.instance.imageCache.clear();
+    notifyListeners();
+  }
+
+  Future<void> removePhoto(String id) async {
+    photoFor(id)?.deleteSync();
+    PaintingBinding.instance.imageCache.clear();
+    notifyListeners();
+  }
+
+  File? localIn(Directory dir, RemoteTrack t) {
+    final f = File('${dir.path}/${trackFileName(t)}');
+    return f.existsSync() ? f : null;
+  }
+
+  String azkarKey(String ownerId) => 'azkar_$ownerId';
+
+  Future<DownloadJob?> downloadAzkar(String ownerId) async {
+    final key = azkarKey(ownerId);
+    if (isDownloading(key)) return jobs[key];
+    final dir = azkarDir(ownerId);
+    await dir.create(recursive: true);
+    final all = [
+      ...Sources.instance.azkarTracks(ownerId, 'morning'),
+      ...Sources.instance.azkarTracks(ownerId, 'evening'),
+    ];
+    final seen = <String>{};
+    final items = [
+      for (final t in all)
+        if (seen.add(t.url) && localIn(dir, t) == null)
+          _Item([t.url], File('${dir.path}/${trackFileName(t)}'))
+    ];
+    return _run(key, items);
+  }
+
+  List<String> get azkarOwners => {
+        ...Sources.instance.azkarOwners('morning'),
+        ...Sources.instance.azkarOwners('evening'),
+      }.toList();
+
+  bool azkarComplete(String ownerId) {
+    final dir = azkarDir(ownerId);
+    final all = [
+      ...Sources.instance.azkarTracks(ownerId, 'morning'),
+      ...Sources.instance.azkarTracks(ownerId, 'evening'),
+    ];
+    return all.isNotEmpty && all.every((t) => localIn(dir, t) != null);
+  }
+
+  bool ruqyahComplete(RuqyahSheikh s) {
+    final tracks = Sources.instance.ruqyahTracks(s.id);
+    final tracksOk = tracks.every((t) => localTrack(s, t) != null);
+    final ayatOk = s.everyAyahFolder == null || ruqyahAyatFiles(s).length >= ruqyahAyatCount;
+    return tracksOk && ayatOk;
+  }
+
+  Future<void> deleteDir(Directory dir) async {
+    if (dir.existsSync()) await dir.delete(recursive: true);
+    _localCache.remove(dir.path);
+    notifyListeners();
+  }
+
+  Future<int> dirSize(Directory dir) async {
+    if (!dir.existsSync()) return 0;
+    var total = 0;
+    await for (final e in dir.list(recursive: true, followLinks: false)) {
+      if (e is File) {
+        try {
+          total += await e.length();
+        } catch (_) {}
+      }
+    }
+    return total;
+  }
+
   String trackFileName(RemoteTrack t) {
     var name = Uri.decodeComponent(Uri.parse(t.url).pathSegments.last);
     name = name.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
@@ -222,6 +309,12 @@ class Library extends ChangeNotifier {
         if (_stopEverything) break;
         await downloadRuqyahTracks(s);
       }
+      for (final id in azkarOwners) {
+        if (_stopEverything) break;
+        everythingCurrent = 'الأذكار';
+        notifyListeners();
+        await downloadAzkar(id);
+      }
       for (final r in reciters) {
         if (_stopEverything) break;
         if (reciterComplete(r) || available(r).isEmpty) continue;
@@ -236,6 +329,45 @@ class Library extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// Runs [tasks] one after another under the "everything" banner.
+  Future<void> runQueue(String label, List<Future<void> Function()> tasks) async {
+    if (everythingRunning) return;
+    everythingRunning = true;
+    _stopEverything = false;
+    everythingCurrent = label;
+    notifyListeners();
+    try {
+      for (final t in tasks) {
+        if (_stopEverything) break;
+        await t();
+      }
+    } finally {
+      everythingRunning = false;
+      everythingCurrent = null;
+      notifyListeners();
+    }
+  }
+
+  Future<void> downloadAllQuran() => runQueue('القرآن لكل الشيوخ', [
+        for (final r in reciters)
+          () async {
+            everythingCurrent = r.name;
+            notifyListeners();
+            await downloadReciter(r);
+          }
+      ]);
+
+  Future<void> downloadAllRuqyah() => runQueue('الرقية', [
+        for (final s in ruqyahSheikhs) ...[
+          if (s.everyAyahFolder != null) () => downloadRuqyahAyat(s),
+          () => downloadRuqyahTracks(s),
+        ]
+      ]);
+
+  Future<void> downloadAllAzkar() => runQueue('الأذكار', [
+        for (final id in azkarOwners) () => downloadAzkar(id),
+      ]);
 
   Future<void> stopEverything() async {
     _stopEverything = true;

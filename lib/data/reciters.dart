@@ -129,6 +129,11 @@ const List<Reciter> reciters = [
     name: 'عمر علي',
     tokens: ['عمرعلي'],
   ),
+  Reciter(
+    id: 'anas',
+    name: 'أنس عبد الستار',
+    tokens: ['انس', 'عبدالستار'],
+  ),
 ];
 
 Reciter? reciterById(String? id) {

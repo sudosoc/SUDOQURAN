@@ -27,6 +27,7 @@ class Sources extends ChangeNotifier {
 
   Map<String, Map<int, List<String>>> _reciters = {};
   Map<String, List<RemoteTrack>> _ruqyah = {};
+  Map<String, Map<String, List<RemoteTrack>>> _azkar = {};
   Map<String, String> labels = {};
   String? generated;
   bool refreshing = false;
@@ -98,8 +99,20 @@ class Sources extends ChangeNotifier {
           RemoteTrack('${(t as Map)['title']}', '${t['url']}', (t['size'] as num?)?.toInt() ?? 0)
       ];
     });
+    final az = <String, Map<String, List<RemoteTrack>>>{};
+    (j['azkar'] as Map? ?? {}).forEach((id, byTime) {
+      final m = <String, List<RemoteTrack>>{};
+      (byTime as Map).forEach((when, list) {
+        m['$when'] = [
+          for (final t in (list as List))
+            RemoteTrack('${(t as Map)['title']}', '${t['url']}', (t['size'] as num?)?.toInt() ?? 0)
+        ];
+      });
+      az['$id'] = m;
+    });
     _reciters = rec;
     _ruqyah = ru;
+    _azkar = az;
     labels = Map<String, String>.from((j['labels'] as Map? ?? {})
         .map((k, v) => MapEntry('$k', '$v')));
     notifyListeners();
@@ -113,4 +126,14 @@ class Sources extends ChangeNotifier {
 
   List<RemoteTrack> ruqyahTracks(String sheikhId) =>
       _ruqyah[sheikhId] ?? const [];
+
+  /// when: 'morning' | 'evening'
+  List<RemoteTrack> azkarTracks(String ownerId, String when) =>
+      _azkar[ownerId]?[when] ?? const [];
+
+  /// Owners (reciter / sheikh ids) that have azkar for [when].
+  List<String> azkarOwners(String when) => [
+        for (final e in _azkar.entries)
+          if ((e.value[when] ?? const []).isNotEmpty) e.key
+      ];
 }

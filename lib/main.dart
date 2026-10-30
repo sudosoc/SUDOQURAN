@@ -27,6 +27,7 @@ Future<void> main() async {
   ]);
 
   await Settings.instance.load();
+  AppColors.apply(themeById(Settings.instance.themeId));
   await Library.instance.init();
   await Sources.instance.load();
   // Don't block first frame on the notification permission dialog.
@@ -46,18 +47,28 @@ class SudoQuranApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'القرآن الكريم',
-      debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
-      locale: const Locale('ar'),
-      supportedLocales: const [Locale('ar'), Locale('en')],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: const HomeShell(),
+    return ListenableBuilder(
+      listenable: Settings.instance,
+      builder: (context, _) {
+        if (AppColors.themeId != Settings.instance.themeId) {
+          AppColors.apply(themeById(Settings.instance.themeId));
+        }
+        return MaterialApp(
+          // A new key per theme rebuilds every widget with the new palette.
+          key: ValueKey(AppColors.themeId),
+          title: 'القرآن الكريم',
+          debugShowCheckedModeBanner: false,
+          theme: buildTheme(),
+          locale: const Locale('ar'),
+          supportedLocales: const [Locale('ar'), Locale('en')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          home: const HomeShell(),
+        );
+      },
     );
   }
 }

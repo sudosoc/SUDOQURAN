@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../services/library.dart';
+import '../services/settings.dart';
+import 'drive_mode.dart';
 import 'glass.dart';
 import 'now_playing.dart';
 import 'quran_page.dart';
@@ -14,11 +17,25 @@ class HomeShell extends StatefulWidget {
 }
 
 class _HomeShellState extends State<HomeShell> {
-  int _tab = 0;
+  static int _tab = 0;
+  static bool _launched = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!_launched) {
+      _launched = true;
+      if (Settings.instance.driveOnLaunch) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) DriveMode.open(context);
+        });
+      }
+    }
+  }
 
   static const _items = [
     (Icons.menu_book_rounded, 'القرآن'),
-    (Icons.shield_moon_rounded, 'الرقية'),
+    (Icons.shield_moon_rounded, 'الرقية\nوالأذكار'),
     (Icons.tune_rounded, 'الإعدادات'),
   ];
 
@@ -88,15 +105,15 @@ class _SideRail extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                     colors: [AppColors.gold, Color(0xFFB8893F)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight),
                 boxShadow: [BoxShadow(color: AppColors.gold.withOpacity(0.4), blurRadius: 24)],
               ),
-              child: const Text('۞', style: TextStyle(fontSize: 34, color: AppColors.bg0)),
+              child: Text('۞', style: TextStyle(fontSize: 34, color: AppColors.bg0)),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 26),
             for (var i = 0; i < items.length; i++)
               Padding(
                 padding: const EdgeInsets.only(bottom: 14),
@@ -107,6 +124,55 @@ class _SideRail extends StatelessWidget {
                   onTap: () => onTap(i),
                 ),
               ),
+            const Spacer(),
+            ListenableBuilder(
+              listenable: Library.instance,
+              builder: (context, _) {
+                final active = Library.instance.jobs.values.where((j) => !j.finished).toList();
+                if (active.isEmpty) return const SizedBox.shrink();
+                final f = active.fold<double>(0, (a, j) => a + j.fraction) / active.length;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Tooltip(
+                    message: 'جاري التحميل',
+                    child: Stack(alignment: Alignment.center, children: [
+                      SizedBox(
+                        width: 54,
+                        height: 54,
+                        child: CircularProgressIndicator(
+                            value: f, strokeWidth: 4, color: AppColors.emerald, backgroundColor: Colors.white12),
+                      ),
+                      Icon(Icons.downloading_rounded, color: AppColors.emerald, size: 28),
+                    ]),
+                  ),
+                );
+              },
+            ),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(24),
+                onTap: () => DriveMode.open(context),
+                child: Ink(
+                  width: 96,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: LinearGradient(
+                      colors: [AppColors.gold, AppColors.gold.withOpacity(0.7)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Column(children: [
+                    Icon(Icons.directions_car_rounded, color: AppColors.bg0, size: 38),
+                    const SizedBox(height: 4),
+                    Text('السواقة',
+                        style: TextStyle(color: AppColors.bg0, fontSize: 17, fontWeight: FontWeight.w800)),
+                  ]),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -144,6 +210,7 @@ class _RailItem extends StatelessWidget {
               Icon(icon, size: 38, color: selected ? AppColors.gold : AppColors.muted),
               const SizedBox(height: 6),
               Text(label,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 17,
                       fontWeight: selected ? FontWeight.w800 : FontWeight.w500,

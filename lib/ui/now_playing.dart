@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../services/library.dart';
 import '../services/player.dart';
 import 'glass.dart';
 
@@ -14,7 +15,7 @@ class NowPlayingPanel extends StatelessWidget {
     return Glass(
       padding: const EdgeInsets.fromLTRB(22, 22, 22, 18),
       child: ListenableBuilder(
-        listenable: player,
+        listenable: Listenable.merge([player, Library.instance]),
         builder: (context, _) {
           final has = player.hasMedia;
           return LayoutBuilder(builder: (context, c) {
@@ -23,14 +24,14 @@ class NowPlayingPanel extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.graphic_eq_rounded, color: AppColors.emerald, size: 22),
+                    Icon(Icons.graphic_eq_rounded, color: AppColors.emerald, size: 22),
                     const SizedBox(width: 8),
                     Text(has ? 'يُتلى الآن' : 'المشغل',
-                        style: const TextStyle(color: AppColors.muted, fontSize: 17)),
+                        style: TextStyle(color: AppColors.muted, fontSize: 17)),
                   ],
                 ),
                 const Spacer(),
-                ReciterAvatar(player.artLetters ?? '۞', size: disc, glow: player.playing),
+                ReciterAvatar(player.artLetters ?? '۞', photoId: player.reciterId ?? player.sheikhId ?? player.azkarOwner, size: disc, glow: player.playing),
                 const SizedBox(height: 18),
                 Text(
                   has ? player.title : 'اختر قارئًا وسورة',
@@ -43,7 +44,7 @@ class NowPlayingPanel extends StatelessWidget {
                   has ? player.subtitle : 'أو اضغط تشغيل لاستكمال آخر تلاوة',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 18, color: AppColors.gold),
+                  style: TextStyle(fontSize: 18, color: AppColors.gold),
                 ),
                 const Spacer(),
                 const _Progress(),
@@ -88,7 +89,7 @@ class NowPlayingPanel extends StatelessWidget {
                                 },
                               ),
                               if (loading && playing)
-                                const SizedBox(
+                                SizedBox(
                                   width: 100,
                                   height: 100,
                                   child: CircularProgressIndicator(
@@ -177,9 +178,9 @@ class _Progress extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(fmtDuration(pos),
-                            style: const TextStyle(color: AppColors.muted, fontSize: 16)),
+                            style: TextStyle(color: AppColors.muted, fontSize: 16)),
                         Text(fmtDuration(dur),
-                            style: const TextStyle(color: AppColors.muted, fontSize: 16)),
+                            style: TextStyle(color: AppColors.muted, fontSize: 16)),
                       ],
                     ),
                   ),

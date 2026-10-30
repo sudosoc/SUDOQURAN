@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../data/owners.dart';
 import '../data/ruqyah.dart';
 import '../services/library.dart';
 import '../services/player.dart';
 import '../services/settings.dart';
 import '../services/sources.dart';
+import 'azkar_view.dart';
 import 'glass.dart';
 
 class RuqyahSection extends StatefulWidget {
@@ -15,7 +17,8 @@ class RuqyahSection extends StatefulWidget {
 }
 
 class _RuqyahSectionState extends State<RuqyahSection> {
-  RuqyahSheikh _sel = ruqyahSheikhs.first;
+  static RuqyahSheikh _sel = ruqyahSheikhs.first;
+  static int _mode = 0; // 0 = ruqyah, 1 = azkar
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +28,27 @@ class _RuqyahSectionState extends State<RuqyahSection> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(4, 4, 4, 16),
-              child: Text('الرقية الشرعية',
-                  style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 4, 4, 16),
+              child: Row(
+                children: [
+                  for (final (i, label, icon) in const [
+                    (0, 'الرقية الشرعية', Icons.shield_moon_rounded),
+                    (1, 'أذكار الصباح والمساء', Icons.wb_twilight_rounded),
+                  ]) ...[
+                    _Segment(
+                      label: label,
+                      icon: icon,
+                      selected: _mode == i,
+                      onTap: () => setState(() => _mode = i),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                ],
+              ),
             ),
+            if (_mode == 1) const Expanded(child: AzkarView()),
+            if (_mode == 0) ...[
             SizedBox(
               height: 104,
               child: Row(
@@ -47,9 +66,47 @@ class _RuqyahSectionState extends State<RuqyahSection> {
             ),
             const SizedBox(height: 16),
             Expanded(child: _SheikhBody(key: ValueKey(_sel.id), sheikh: _sel)),
+            ],
           ],
         );
       },
+    );
+  }
+}
+
+class _Segment extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+  const _Segment({required this.label, required this.icon, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(40),
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            color: selected ? AppColors.gold.withOpacity(0.2) : Colors.white.withOpacity(0.05),
+            border: Border.all(color: selected ? AppColors.gold : Colors.white.withOpacity(0.12), width: 1.5),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(icon, color: selected ? AppColors.gold : AppColors.muted, size: 28),
+            const SizedBox(width: 10),
+            Text(label,
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: selected ? FontWeight.w900 : FontWeight.w600,
+                    color: selected ? AppColors.text : AppColors.muted)),
+          ]),
+        ),
+      ),
     );
   }
 }
@@ -79,7 +136,7 @@ class _SheikhCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
           child: Row(
             children: [
-              const Icon(Icons.shield_moon_rounded, color: AppColors.gold, size: 44),
+              ReciterAvatar(ownerInitials(sheikh.id), photoId: sheikh.id, size: 72, glow: playing),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -95,7 +152,7 @@ class _SheikhCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (playing) const Icon(Icons.graphic_eq_rounded, color: AppColors.emerald, size: 30),
+              if (playing) Icon(Icons.graphic_eq_rounded, color: AppColors.emerald, size: 30),
             ],
           ),
         ),
@@ -136,7 +193,7 @@ class _SheikhBody extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.auto_awesome_rounded, color: AppColors.gold, size: 32),
+                    Icon(Icons.auto_awesome_rounded, color: AppColors.gold, size: 32),
                     const SizedBox(width: 12),
                     const Expanded(
                       child: Text('الرقية الشرعية بآيات القرآن',
@@ -174,7 +231,7 @@ class _SheikhBody extends StatelessWidget {
                       : ayatFiles.length >= total
                           ? '$total آية بصوت الشيخ ${sheikh.name} — جاهزة أوفلاين'
                           : '${ayatFiles.length} من $total آية على الجهاز (حوالي 25 ميجا)',
-                  style: const TextStyle(color: AppColors.muted, fontSize: 17),
+                  style: TextStyle(color: AppColors.muted, fontSize: 17),
                 ),
                 if (ayatDownloading)
                   Padding(
@@ -216,7 +273,7 @@ class _SheikhBody extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.queue_music_rounded, color: AppColors.gold, size: 32),
+                  Icon(Icons.queue_music_rounded, color: AppColors.gold, size: 32),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -250,7 +307,7 @@ class _SheikhBody extends StatelessWidget {
                 tDownloading
                     ? 'جاري التحميل ${tJob!.done}/${tJob!.total}'
                     : '$localCount من ${tracks.length} تسجيل على الجهاز',
-                style: const TextStyle(color: AppColors.muted, fontSize: 17),
+                style: TextStyle(color: AppColors.muted, fontSize: 17),
               ),
               if (tDownloading)
                 Padding(
@@ -271,7 +328,7 @@ class _SheikhBody extends StatelessWidget {
                     Sources.instance.refreshing
                         ? 'بندوّر على التسجيلات...'
                         : 'لسه ملقيناش تسجيلات أونلاين للشيخ ${sheikh.name} — قائمة المصادر بتتحدث تلقائيًا كل أسبوع.',
-                    style: const TextStyle(color: AppColors.muted, fontSize: 18, height: 1.6),
+                    style: TextStyle(color: AppColors.muted, fontSize: 18, height: 1.6),
                   ),
                 ),
               for (var i = 0; i < tracks.length; i++)

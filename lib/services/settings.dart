@@ -15,6 +15,12 @@ class Settings extends ChangeNotifier {
   /// Keep downloading missing audio whenever the app opens.
   bool autoDownload = false;
 
+  /// Selected colour theme.
+  String themeId = 'emerald';
+
+  /// Open straight into driving mode when the app starts.
+  bool driveOnLaunch = false;
+
   /// Last thing that was playing, used for "continue" and auto-resume.
   Map<String, dynamic>? lastSession;
 
@@ -24,6 +30,8 @@ class Settings extends ChangeNotifier {
     allowStreaming = _p.getBool('allowStreaming') ?? true;
     autoResume = _p.getBool('autoResume') ?? true;
     autoDownload = _p.getBool('autoDownload') ?? false;
+    themeId = _p.getString('themeId') ?? 'emerald';
+    driveOnLaunch = _p.getBool('driveOnLaunch') ?? false;
     final ls = _p.getString('lastSession');
     if (ls != null) {
       try {
@@ -47,6 +55,18 @@ class Settings extends ChangeNotifier {
   Future<void> setAutoDownload(bool v) async {
     autoDownload = v;
     await _p.setBool('autoDownload', v);
+    notifyListeners();
+  }
+
+  Future<void> setTheme(String id) async {
+    themeId = id;
+    await _p.setString('themeId', id);
+    notifyListeners();
+  }
+
+  Future<void> setDriveOnLaunch(bool v) async {
+    driveOnLaunch = v;
+    await _p.setBool('driveOnLaunch', v);
     notifyListeners();
   }
 

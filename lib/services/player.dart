@@ -11,8 +11,9 @@ import '../data/surahs.dart';
 import 'library.dart';
 import 'settings.dart';
 import 'sources.dart';
+import 'widget_bridge.dart';
 
-enum PlayKind { none, quran, ruqyahAyat, ruqyahTracks }
+enum PlayKind { none, quran, ruqyahAyat, ruqyahTracks, azkar }
 
 class Player extends ChangeNotifier {
   Player._();
@@ -23,6 +24,8 @@ class Player extends ChangeNotifier {
   PlayKind kind = PlayKind.none;
   String? reciterId;
   String? sheikhId;
+  String? azkarOwner;
+  String? azkarWhen;
   List<int> _surahOrder = [];
 
   String title = '';
@@ -43,8 +46,12 @@ class Player extends ChangeNotifier {
       }
       notifyListeners();
       _save();
+      HomeWidgetBridge.update(title, subtitle, audio.playing);
     });
-    audio.playerStateStream.listen((_) => notifyListeners());
+    audio.playerStateStream.listen((st) {
+      notifyListeners();
+      HomeWidgetBridge.update(title, subtitle, st.playing);
+    });
     audio.loopModeStream.listen((_) => notifyListeners());
     _saveTimer = Timer.periodic(const Duration(seconds: 8), (_) {
       if (audio.playing) _save();
@@ -99,6 +106,7 @@ class Player extends ChangeNotifier {
     if (idx < 0) return false;
 
     kind = PlayKind.quran;
+    azkarOwner = null;
     reciterId = r.id;
     sheikhId = null;
     artLetters = r.initials;
@@ -174,6 +182,42 @@ class Player extends ChangeNotifier {
     return true;
   }
 
+  /// Morning / evening azkar of [ownerId] (a reciter id or ruqyah sheikh id).
+  Future<bool> playAzkar(String ownerId, String ownerName, String when,
+      {int index = 0, Duration position = Duration.zero, bool autoplay = true}) async {
+    final lib = Library.instance;
+    final stream = Settings.instance.allowStreaming;
+    final remote = Sources.instance.azkarTracks(ownerId, when);
+    final dir = lib.azkarDir(ownerId);
+    final sources = <AudioSource>[];
+    var start = 0;
+    for (var i = 0; i < remote.length; i++) {
+      final t = remote[i];
+      final f = lib.localIn(dir, t);
+      if (f == null && !stream) continue;
+      if (i == index) start = sources.length;
+      final tag = MediaItem(
+        id: 'az_${ownerId}_${when}_$i',
+        title: when == 'morning' ? 'أذكار الصباح' : 'أذكار المساء',
+        artist: ownerName,
+        album: 'الأذكار',
+      );
+      sources.add(f != null ? AudioSource.file(f.path, tag: tag) : AudioSource.uri(Uri.parse(t.url), tag: tag));
+    }
+    if (sources.isEmpty) return false;
+    kind = PlayKind.azkar;
+    azkarOwner = ownerId;
+    azkarWhen = when;
+    sheikhId = null;
+    reciterId = null;
+    artLetters = when == 'morning' ? '☀' : '☾';
+    await audio.setAudioSource(ConcatenatingAudioSource(children: sources),
+        initialIndex: start, initialPosition: position);
+    if (autoplay) unawaited(audio.play());
+    notifyListeners();
+    return true;
+  }
+
   static String trackTitle(File f) {
     var n = f.path.split(Platform.pathSeparator).last;
     final dot = n.lastIndexOf('.');
@@ -231,6 +275,8 @@ class Player extends ChangeNotifier {
       'pos': audio.position.inMilliseconds,
       'title': title,
       'subtitle': subtitle,
+      'azOwner': azkarOwner,
+      'azWhen': azkarWhen,
     });
   }
 
@@ -252,6 +298,12 @@ class Player extends ChangeNotifier {
         final sh = sheikhById(s['sheikh'] as String?);
         if (sh == null) return false;
         return playRuqyahAyat(sh,
+            index: (s['index'] as int?) ?? 0, position: pos, autoplay: autoplay);
+      case 'azkar':
+        final o = s['azOwner'] as String?;
+        final w = s['azWhen'] as String?;
+        if (o == null || w == null) return false;
+        return playAzkar(o, (s['subtitle'] as String?) ?? '', w,
             index: (s['index'] as int?) ?? 0, position: pos, autoplay: autoplay);
       case 'ruqyahTracks':
         final sh = sheikhById(s['sheikh'] as String?);
