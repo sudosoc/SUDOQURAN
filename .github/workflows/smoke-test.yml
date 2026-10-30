@@ -30,6 +30,13 @@ jobs:
       - run: bash tool/setup_android.sh
       - name: Build x64 release APK (same config as the car build)
         run: flutter build apk --release --target-platform android-x64
+      - name: Free disk space
+        run: |
+          mkdir -p /tmp/apk && cp build/app/outputs/flutter-apk/app-release.apk /tmp/apk/
+          rm -rf build android/.gradle ~/.gradle/caches
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /usr/local/lib/android/sdk/ndk "$AGENT_TOOLSDIRECTORY" /usr/local/.ghcup /usr/share/swift || true
+          mkdir -p build/app/outputs/flutter-apk && cp /tmp/apk/app-release.apk build/app/outputs/flutter-apk/
+          df -h /
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
