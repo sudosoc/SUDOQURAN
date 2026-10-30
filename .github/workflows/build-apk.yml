@@ -1,0 +1,79 @@
+name: Build APK
+
+on:
+  workflow_run:
+    workflows: [Sources]
+    types: [completed]
+  push:
+    branches: [main]
+    paths: ['lib/**', 'pubspec.yaml', 'android_overrides/**', 'tool/setup_android.sh', 'assets/**', '.github/workflows/build-apk.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Setup Android project
+        run: bash tool/setup_android.sh 2>&1 | tee setup.log; exit ${PIPESTATUS[0]}
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee analyze.log; exit ${PIPESTATUS[0]}
+
+      - name: Build release APK (arm64)
+        run: flutter build apk --release --target-platform android-arm64 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk SUDOQURAN.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SUDOQURAN-apk
+          path: SUDOQURAN.apk
+
+      - name: Publish to Releases (latest)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: SUDOQURAN (latest build)
+          prerelease: false
+          make_latest: true
+          files: SUDOQURAN.apk
+          body: |
+            آخر نسخة من SUDOQURAN — نزّل `SUDOQURAN.apk` وثبته على شاشة العربية.
+            Commit: ${{ github.sha }}
+
+      - name: Push logs on failure
+        if: failure()
+        run: |
+          mkdir -p /tmp/logs && cp *.log /tmp/logs/ 2>/dev/null || true
+          git config user.name "sudoquran-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git fetch origin ci-logs || true
+          git checkout --orphan ci-logs-tmp
+          git rm -rf --cached . >/dev/null
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp /tmp/logs/*.log . 2>/dev/null || echo "no logs" > none.log
+          echo "${{ github.sha }} $(date -u)" > RUN.txt
+          git add -A && git commit -m "ci logs" && git push -f origin HEAD:ci-logs
