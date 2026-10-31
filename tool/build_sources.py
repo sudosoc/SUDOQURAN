@@ -583,6 +583,8 @@ def radios():
                 urls.append(u)
         with cf.ThreadPoolExecutor(8) as ex:
             ok = [u for u, g in zip(urls[:14], ex.map(check_stream, urls[:14])) if g]
+        if not ok and gid == "madinah":
+            continue  # no genuine Madinah stream — better nothing than a wrong station
         out.append({"id": gid, "name": name, "desc": desc, "urls": ok[:4],
                     "found": [c[2] for c in cands[:5]]})
 
@@ -592,7 +594,7 @@ def radios():
         if grp["id"] == "madinah" and not grp["urls"]:
             for r in (data.get("radios") or []):
                 n = r.get("name") or ""
-                if ("المدينة" in n or "النبوي" in n) and r.get("url") and check_stream(r["url"]):
+                if ("المدينة المنورة" in n or "المسجد النبوي" in n) and r.get("url") and check_stream(r["url"]):
                     grp["urls"].append(r["url"])
                     grp["found"].append(n)
     extra = []
@@ -696,7 +698,8 @@ def main():
          'اذان علي ملا', 'adhan ali mulla', 'اذان ناصر القطامي', 'beautiful adhan'],
         must=["اذان", "الاذان", "adhan", "azan", "adzan", "athan", "ezan"], min_size=250_000, max_size=9_000_000, limit=24,
         exclude=["doa", "دعاء", "setelah", "ketika", "dua", "qolqolah", "surah", "سوره", "iqama", "اقامه", "lesson", "درس",
-                 "ringtone", "nasheed", "نشيد", "song", "اغنيه"])
+                 "ringtone", "nasheed", "نشيد", "song", "اغنيه", "bidah", "makruh", "sebelum", "tanpa", "hukum",
+                 "حكم", "fatwa", "فتوى", "kajian"])
     report.append(f"## adhan — {len(result['adhan'])} tracks")
     for t in result["adhan"]:
         report.append(f"- {t['title']} ({t['size'] // 1000} KB)")
