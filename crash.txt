@@ -1,0 +1,157 @@
+10-31 16:21:49.152  2443  2443 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 16:21:49.161  2443  2443 I AndroidRuntime: Using default boot image
+10-31 16:21:49.161  2443  2443 I AndroidRuntime: Leaving lock profiling enabled
+10-31 16:21:49.730  2443  2443 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+10-31 16:21:49.733  2443  2443 W Monkey  : args: [-p, com.sudosoc.sudoquran, -c, android.intent.category.LAUNCHER, 1]
+10-31 16:21:49.733  2443  2443 W Monkey  :  arg: "com.sudosoc.sudoquran"
+10-31 16:21:49.733  2443  2443 W Monkey  : data="com.sudosoc.sudoquran"
+10-31 16:21:50.131   484  1873 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.sudosoc.sudoquran/.MainActivity} from uid 2000
+10-31 16:21:50.180   484  1767 D CoreBackPreview: Window{c6d4603 u0 Splash Screen com.sudosoc.sudoquran}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@cb19bb9, mPriority=0}
+10-31 16:21:50.463  2443  2443 I AndroidRuntime: VM exiting with result code 0.
+10-31 16:21:50.508  2546  2546 I dosoc.sudoquran: Using CollectorTypeCC GC.
+10-31 16:21:50.511  2546  2546 W dosoc.sudoquran: Unexpected CPU variant for x86: x86_64.
+10-31 16:21:50.511  2546  2546 W dosoc.sudoquran: Known variants: atom, sandybridge, silvermont, kabylake, default
+10-31 16:21:50.536   484   735 I SdkSandboxManager: No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10174, mPackageName='com.sudosoc.sudoquran'}
+10-31 16:21:50.539   959   959 D MediaPlayerList: Name of package changed: com.sudosoc.sudoquran
+10-31 16:21:50.541   959   959 D MediaPlayerList: Name of package changed: com.sudosoc.sudoquran
+10-31 16:21:50.563   484   518 I ActivityManager: Start proc 2546:com.sudosoc.sudoquran/u0a174 for next-top-activity {com.sudosoc.sudoquran/com.sudosoc.sudoquran.MainActivity}
+10-31 16:21:50.735  2546  2546 D nativeloader: Configuring classloader-namespace for other apk /system_ext/framework/androidx.window.extensions.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/lib/x86_64:/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.sudosoc.sudoquran
+10-31 16:21:50.737  2546  2546 D nativeloader: Configuring classloader-namespace for other apk /system_ext/framework/androidx.window.sidecar.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/lib/x86_64:/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.sudosoc.sudoquran
+10-31 16:21:50.738  2546  2546 D nativeloader: Configuring classloader-namespace for other apk /data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/lib/x86_64:/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.sudosoc.sudoquran
+10-31 16:21:50.833  2546  2546 V GraphicsEnvironment: ANGLE Developer option for 'com.sudosoc.sudoquran' set to: 'default'
+10-31 16:21:50.833  2546  2546 V GraphicsEnvironment: ANGLE GameManagerService for com.sudosoc.sudoquran: false
+10-31 16:21:51.410   484  1148 I WindowManager: finishDrawing of orientation change: Window{c6d4603 u0 Splash Screen com.sudosoc.sudoquran} 677ms
+10-31 16:21:52.273   986   986 D CarrierSvcBindHelper: onPackageAdded: com.sudosoc.sudoquran
+10-31 16:21:52.602  2546  2546 W dosoc.sudoquran: type=1400 audit(0.0:15): avc: denied { read } for name="max_map_count" dev="proc" ino=52689 scontext=u:r:untrusted_app:s0:c174,c256,c512,c768 tcontext=u:object_r:proc_max_map_count:s0 tclass=file permissive=0 app=com.sudosoc.sudoquran
+10-31 16:21:52.658  2546  2644 I flutter : [IMPORTANT:flutter/shell/platform/android/android_context_gl_impeller.cc(104)] Using the Impeller rendering backend (OpenGLES).
+10-31 16:21:52.749   484  2188 D CoreBackPreview: Window{6c4f00a u0 com.sudosoc.sudoquran/com.sudosoc.sudoquran.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@d5c8e98, mPriority=0}
+10-31 16:21:53.123   986   986 D ImsResolver: maybeAddedImsService, packageName: com.sudosoc.sudoquran
+10-31 16:21:53.199   484  1808 I MediaSessionStack: addSession to bottom of stack | record: com.sudosoc.sudoquran/media-session (userId=0)
+10-31 16:21:53.213  2546  2546 I System.out: flutterEngine warmed up
+10-31 16:21:54.137   484  1545 I MediaSessionStack: onPlaybackStateChanged - Pushing session to top | record: com.sudosoc.sudoquran/media-session (userId=0)
+10-31 16:21:54.947   484  1884 I MediaFocusControl: requestAudioFocus() from uid/pid 10174/2546 AA=USAGE_MEDIA/CONTENT_TYPE_UNKNOWN clientId=android.media.AudioManager@b242e15com.ryanheise.audio_session.AndroidAudioManager$Singleton$$ExternalSyntheticLambda26@db0352a callingPack=com.sudosoc.sudoquran req=1 flags=0x0 sdk=36
+10-31 16:21:55.092   484  1744 I MediaSessionStack: onPlaybackStateChanged - Pushing session to top | record: com.sudosoc.sudoquran/media-session (userId=0)
+10-31 16:21:55.155   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:55.184   959   959 I MediaPlayerList: Adding wrapped media player: com.sudosoc.sudoquran at key: 1
+10-31 16:21:55.212   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:55.218   959   959 I MediaPlayerList: Adding wrapped media player: com.sudosoc.sudoquran at key: 1
+10-31 16:21:55.232   484   484 D MediaSessionService: Media button session is changed to com.sudosoc.sudoquran/media-session (userId=0)
+10-31 16:21:55.263   959   959 I MediaPlayerList: onMediaKeyEventSessionChanged: token=com.sudosoc.sudoquran
+10-31 16:21:55.271   959   959 D MediaPlayerList: setActivePlayer(): setting player to com.sudosoc.sudoquran
+10-31 16:21:55.374   959   959 I MediaPlayerList: onMediaKeyEventSessionChanged: token=com.sudosoc.sudoquran
+10-31 16:21:55.379   959   959 D MediaPlayerList: setActivePlayer(): setting player to com.sudosoc.sudoquran
+10-31 16:21:55.380   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:55.380   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:55.396   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:55.397   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:55.666   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=695, buffered position=20819, speed=1.0, updated=82932, actions=16252911, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=0, error=null}
+10-31 16:21:55.666   959   959 W AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran tried to update with no new data
+10-31 16:21:55.667   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=695, buffered position=20819, speed=1.0, updated=82932, actions=16252911, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=0, error=null}
+10-31 16:21:55.667   959   959 W AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran tried to update with no new data
+10-31 16:21:55.708   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:55.708   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:55.710   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:55.710   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:55.715   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:55.715   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:55.717   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:55.717   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:56.561   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:56.561   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:56.570   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:56.570   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:56.853   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:56.853   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:56.855   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+10-31 16:21:56.855   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+10-31 16:21:57.771  1020  1122 I Launcher.IconCache: Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.sudosoc.sudoquran/com.sudosoc.sudoquran.MainActivity}
+10-31 16:21:58.097  2546  3164 D ProfileInstaller: Installing profile for com.sudosoc.sudoquran
+10-31 16:22:00.904  2546  2553 I dosoc.sudoquran: Background concurrent copying GC freed 63073(2954KB) AllocSpace objects, 25(1172KB) LOS objects, 49% free, 4970KB/9941KB, paused 64us,13us total 245.223ms
+10-31 16:22:01.119  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.529  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.529  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.529  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.529  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.529  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.529  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.529  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.530  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.530  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.530  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:01.861  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:07.126   484   504 I ActivityTaskManager: Displayed com.sudosoc.sudoquran/.MainActivity: +16s989ms
+10-31 16:22:07.126   484   504 I ActivityTaskManager: Fully drawn com.sudosoc.sudoquran/.MainActivity: +16s989ms
+10-31 16:22:07.336  1555  1555 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=com.sudosoc.sudoquran fieldId=-1 fieldName=null extras=null}, false)
+10-31 16:22:08.984   484  2009 W InputManager-JNI: Input channel object 'c6d4603 Splash Screen com.sudosoc.sudoquran (client)' was disposed without first being removed with the input manager!
+10-31 16:22:12.586  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:12.586  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:12.586  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:12.623  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:12.623  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:12.623  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:13.329  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:13.332  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:13.332  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:14.182  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:14.182  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:15.615  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:15.623  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:15.624  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:15.701  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:15.702  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:17.591   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=17, buffered position=5903, speed=1.0, updated=104743, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+10-31 16:22:17.595   959   959 V AudioMediaPlayerWrapper: trySendMediaUpdate(): Metadata has been updated for com.sudosoc.sudoquran
+10-31 16:22:17.597   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=17, buffered position=5903, speed=1.0, updated=104743, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+10-31 16:22:17.598   959   959 V AudioMediaPlayerWrapper: trySendMediaUpdate(): Metadata has been updated for com.sudosoc.sudoquran
+10-31 16:22:17.714   959   959 V AudioMediaPlayerWrapper: onQueueChanged(): com.sudosoc.sudoquran
+10-31 16:22:17.724   959   959 W AudioMediaPlayerWrapper: onQueueChanged(): com.sudosoc.sudoquran tried to update with no new data
+10-31 16:22:17.726   959   959 V AudioMediaPlayerWrapper: onQueueChanged(): com.sudosoc.sudoquran
+10-31 16:22:17.726   959   959 W AudioMediaPlayerWrapper: onQueueChanged(): com.sudosoc.sudoquran tried to update with no new data
+10-31 16:22:18.080   755   755 D MediaResumeListener: Checking for service component for com.sudosoc.sudoquran
+10-31 16:22:21.825   755   846 D MediaResumeListener: Testing if we can connect to ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+10-31 16:22:24.099   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=5915, buffered position=5915, speed=1.0, updated=111341, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+10-31 16:22:24.101   959   959 V AudioMediaPlayerWrapper: trySendMediaUpdate(): Metadata has been updated for com.sudosoc.sudoquran
+10-31 16:22:24.105   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=5915, buffered position=5915, speed=1.0, updated=111341, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+10-31 16:22:24.172   959   959 V AudioMediaPlayerWrapper: trySendMediaUpdate(): Metadata has been updated for com.sudosoc.sudoquran
+10-31 16:22:24.241   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=5915, buffered position=5915, speed=1.0, updated=111341, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+10-31 16:22:24.254   959   959 W AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran tried to update with no new data
+10-31 16:22:24.275   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=5915, buffered position=5915, speed=1.0, updated=111341, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+10-31 16:22:24.293   959   959 W AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran tried to update with no new data
+10-31 16:22:29.912   755   846 D ResumeMediaBrowser: Service connected for ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+10-31 16:22:29.970   755   846 D MediaResumeListener: Connected to ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+10-31 16:22:30.161  1020  1122 I Launcher.IconCache: Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.sudosoc.sudoquran/com.sudosoc.sudoquran.MainActivity}
+10-31 16:22:30.214   755   846 D ResumeMediaBrowser: No children found for ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+10-31 16:22:30.231   755   846 E MediaResumeListener: Cannot resume with ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+10-31 16:22:39.948  3809  3809 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 16:22:39.978  3809  3809 I AndroidRuntime: Using default boot image
+10-31 16:22:39.978  3809  3809 I AndroidRuntime: Leaving lock profiling enabled
+10-31 16:22:40.563  3809  3809 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+10-31 16:22:40.567  3809  3809 W Monkey  : args: [-p, com.sudosoc.sudoquran, -c, android.intent.category.LAUNCHER, 1]
+10-31 16:22:40.572  3809  3809 W Monkey  :  arg: "com.sudosoc.sudoquran"
+10-31 16:22:40.572  3809  3809 W Monkey  : data="com.sudosoc.sudoquran"
+10-31 16:22:40.611   484   502 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.sudosoc.sudoquran/.MainActivity} from uid 2000
+10-31 16:22:40.721  3809  3809 I AndroidRuntime: VM exiting with result code 0.
+10-31 16:22:44.401  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:44.401  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:50.205  1307  3882 I BlockstoreStorage: Clearing Blockstore Data for package com.sudosoc.sudoquran [CONTEXT service_id=258 ]
+10-31 16:22:52.191  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:52.191  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:52.191  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:52.336  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:52.337  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:52.338  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:52.374  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:52.385  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:52.390  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:53.808  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:53.810  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:53.811  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:56.397  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:56.397  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:56.397  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:59.764  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:59.765  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:22:59.767  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:23:02.147  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:23:02.162  1754  2958 W SearchServiceCore: Abort, client detached.
+10-31 16:23:02.166  1754  2958 W SearchServiceCore: Abort, client detached.

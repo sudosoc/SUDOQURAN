@@ -1,0 +1,161 @@
++ SDK=/usr/local/lib/android/sdk
++ BIN=/usr/local/lib/android/sdk/cmdline-tools/latest/bin
++ ls /usr/local/lib/android/sdk /usr/local/lib/android/sdk/cmdline-tools
+/usr/local/lib/android/sdk:
+build-tools
+cmake
+cmdline-tools
+extras
+licenses
+packages-list.txt
+platform-tools
+platforms
+
+/usr/local/lib/android/sdk/cmdline-tools:
+latest
++ export ANDROID_AVD_HOME=/home/runner/.android/avd
++ ANDROID_AVD_HOME=/home/runner/.android/avd
++ mkdir -p /home/runner/.android/avd
++ export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
++ ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
++ IMG='system-images;android-33;google_apis;x86_64'
++ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root       145G   45G  101G  31% /
++ yes
++ /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --install emulator platform-tools 'system-images;android-33;google_apis;x86_64'
+yes: standard output: Broken pipe
++ echo 'sdkmanager exit 0'
+sdkmanager exit 0
++ echo no
++ /usr/local/lib/android/sdk/cmdline-tools/latest/bin/avdmanager create avd -n smoke -k 'system-images;android-33;google_apis;x86_64' -d pixel_6 --force
+Loading local repository...                                                     Warning: This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+[=========                              ] 25% Loading local repository...       [=========                              ] 25% Fetch remote repository...        [=======================================] 100% Fetch remote repository...       
+Auto-selecting single ABI x86_64
++ ls -la /home/runner/.android/avd
+total 16
+drwxr-xr-x 3 runner runner 4096 Oct 31 16:20 .
+drwxr-xr-x 3 runner runner 4096 Oct 31 16:19 ..
+drwxr-xr-x 2 runner runner 4096 Oct 31 16:20 smoke.avd
+-rw-r--r-- 1 runner runner   82 Oct 31 16:20 smoke.ini
++ /usr/local/lib/android/sdk/emulator/emulator -list-avds
+smoke
++ ADB=/usr/local/lib/android/sdk/platform-tools/adb
++ timeout 300 /usr/local/lib/android/sdk/platform-tools/adb wait-for-device
++ /usr/local/lib/android/sdk/emulator/emulator -avd smoke -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -memory 4096
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+++ seq 1 120
++ for i in $(seq 1 120)
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ b=
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 120)
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ b=
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 120)
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ b=
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 120)
+++ tr -d '\r'
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
++ b=
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 120)
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ b=
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 120)
+++ tr -d '\r'
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
++ b=
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 120)
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ b=
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 120)
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ b=
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 120)
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ b=
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 120)
+++ /usr/local/lib/android/sdk/platform-tools/adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ b=1
++ '[' 1 = 1 ']'
++ break
++ echo 'boot_completed=1 after 10'
+boot_completed=1 after 10
++ /usr/local/lib/android/sdk/platform-tools/adb shell settings put global window_animation_scale 0
++ export PATH=/usr/local/lib/android/sdk/platform-tools:/home/runner/.pub-cache/bin:/opt/hostedtoolcache/flutter/stable-3.47.9-x64/flutter/bin/cache/dart-sdk/bin:/opt/hostedtoolcache/flutter/stable-3.47.9-x64/flutter/bin:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64/bin:/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
++ PATH=/usr/local/lib/android/sdk/platform-tools:/home/runner/.pub-cache/bin:/opt/hostedtoolcache/flutter/stable-3.47.9-x64/flutter/bin/cache/dart-sdk/bin:/opt/hostedtoolcache/flutter/stable-3.47.9-x64/flutter/bin:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64/bin:/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
++ bash tool/smoke.sh
++ mkdir -p smoke
++ adb install -r -g build/app/outputs/flutter-apk/app-release.apk
++ tee smoke/install.txt
+Performing Streamed Install
+Success
++ adb logcat -c
++ adb shell monkey -p com.sudosoc.sudoquran -c android.intent.category.LAUNCHER 1
+  bash arg: -p
+  bash arg: com.sudosoc.sudoquran
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.sudosoc.sudoquran, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.sudosoc.sudoquran"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.sudosoc.sudoquran"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=37ms (0ms mobile, 0ms wifi, 37ms not connected)
++ sleep 45
++ adb exec-out screencap -p
++ adb shell pidof com.sudosoc.sudoquran
++ adb shell monkey -p com.sudosoc.sudoquran -c android.intent.category.LAUNCHER 1
+  bash arg: -p
+  bash arg: com.sudosoc.sudoquran
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.sudosoc.sudoquran, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.sudosoc.sudoquran"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.sudosoc.sudoquran"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=71ms (0ms mobile, 0ms wifi, 71ms not connected)
++ sleep 20
++ adb exec-out screencap -p
++ adb logcat -d
++ grep -nE 'AndroidRuntime|FATAL|Exception|flutter|sudoquran|audioservice|DEBUG   :' smoke/logcat_full.txt
++ head -400
++ exit 0

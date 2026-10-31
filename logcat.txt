@@ -1,0 +1,277 @@
+521:10-31 16:21:49.076   757  2437 E BackupHelper: java.io.FileNotFoundException: /data/user_de/0/com.google.android.permissioncontroller/files/delayed_restore_permissions.xml: open failed: ENOENT (No such file or directory)
+534:10-31 16:21:49.076   757  2437 E BackupHelper: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+556:10-31 16:21:49.152  2443  2443 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+560:10-31 16:21:49.161  2443  2443 I AndroidRuntime: Using default boot image
+561:10-31 16:21:49.161  2443  2443 I AndroidRuntime: Leaving lock profiling enabled
+576:10-31 16:21:49.241   991   991 E SetupWizard: [cng] Exception getting FRP
+577:10-31 16:21:49.241   991   991 E SetupWizard: java.util.concurrent.CompletionException: java.util.concurrent.TimeoutException
+590:10-31 16:21:49.241   991   991 E SetupWizard: Caused by: java.util.concurrent.TimeoutException
+593:10-31 16:21:49.243   991   991 W SetupWizard: [cap] Retrying future. Exception=java.util.concurrent.CompletionException: java.util.concurrent.TimeoutException
+616:10-31 16:21:49.263  1020  1020 W BcSmartspaceView: java.lang.SecurityException: No access to content://settings/secure/doze_always_on: Neither user 10154 nor current process has android.permission.INTERACT_ACROSS_USERS_FULL.
+617:10-31 16:21:49.263  1020  1020 W BcSmartspaceView: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3011)
+618:10-31 16:21:49.263  1020  1020 W BcSmartspaceView: 	at android.os.Parcel.createException(Parcel.java:2995)
+619:10-31 16:21:49.263  1020  1020 W BcSmartspaceView: 	at android.os.Parcel.readException(Parcel.java:2978)
+620:10-31 16:21:49.263  1020  1020 W BcSmartspaceView: 	at android.os.Parcel.readException(Parcel.java:2920)
+644:10-31 16:21:49.263  1020  1020 W BcSmartspaceView: Caused by: android.os.RemoteException: Remote stack trace:
+784:10-31 16:21:49.730  2443  2443 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+787:10-31 16:21:49.733  2443  2443 W Monkey  : args: [-p, com.sudosoc.sudoquran, -c, android.intent.category.LAUNCHER, 1]
+789:10-31 16:21:49.733  2443  2443 W Monkey  :  arg: "com.sudosoc.sudoquran"
+793:10-31 16:21:49.733  2443  2443 W Monkey  : data="com.sudosoc.sudoquran"
+898:10-31 16:21:50.131   484  1873 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.sudosoc.sudoquran/.MainActivity} from uid 2000
+932:10-31 16:21:50.180   484  1767 D CoreBackPreview: Window{c6d4603 u0 Splash Screen com.sudosoc.sudoquran}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@cb19bb9, mPriority=0}
+979:10-31 16:21:50.463  2443  2443 I AndroidRuntime: VM exiting with result code 0.
+995:10-31 16:21:50.508  2546  2546 I dosoc.sudoquran: Using CollectorTypeCC GC.
+996:10-31 16:21:50.511  2546  2546 W dosoc.sudoquran: Unexpected CPU variant for x86: x86_64.
+997:10-31 16:21:50.511  2546  2546 W dosoc.sudoquran: Known variants: atom, sandybridge, silvermont, kabylake, default
+1009:10-31 16:21:50.536   484   735 I SdkSandboxManager: No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10174, mPackageName='com.sudosoc.sudoquran'}
+1013:10-31 16:21:50.539   959   959 D MediaPlayerList: Name of package changed: com.sudosoc.sudoquran
+1016:10-31 16:21:50.541   959   959 D MediaPlayerList: Name of package changed: com.sudosoc.sudoquran
+1029:10-31 16:21:50.563   484   518 I ActivityManager: Start proc 2546:com.sudosoc.sudoquran/u0a174 for next-top-activity {com.sudosoc.sudoquran/com.sudosoc.sudoquran.MainActivity}
+1046:10-31 16:21:50.604   986   986 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: ImsService is not available for the subscription specified. (code: 1)
+1073:10-31 16:21:50.735  2546  2546 D nativeloader: Configuring classloader-namespace for other apk /system_ext/framework/androidx.window.extensions.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/lib/x86_64:/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.sudosoc.sudoquran
+1074:10-31 16:21:50.737  2546  2546 D nativeloader: Configuring classloader-namespace for other apk /system_ext/framework/androidx.window.sidecar.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/lib/x86_64:/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.sudosoc.sudoquran
+1075:10-31 16:21:50.738  2546  2546 D nativeloader: Configuring classloader-namespace for other apk /data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/lib/x86_64:/data/app/~~exYWOHNg7iOb1as_P6_Rag==/com.sudosoc.sudoquran-5tijnM-eYIhHHcihOuzXvQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.sudosoc.sudoquran
+1076:10-31 16:21:50.754   986   986 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: ImsService is not available for the subscription specified. (code: 1)
+1102:10-31 16:21:50.833  2546  2546 V GraphicsEnvironment: ANGLE Developer option for 'com.sudosoc.sudoquran' set to: 'default'
+1103:10-31 16:21:50.833  2546  2546 V GraphicsEnvironment: ANGLE GameManagerService for com.sudosoc.sudoquran: false
+1121:10-31 16:21:50.910   936   956 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+1219:10-31 16:21:51.410   484  1148 I WindowManager: finishDrawing of orientation change: Window{c6d4603 u0 Splash Screen com.sudosoc.sudoquran} 677ms
+1224:10-31 16:21:51.421   282   905 I netd    : networkAddInterface(101, wlan0) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
+1226:10-31 16:21:51.421   484   699 W ConnectivityService: Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+1228:10-31 16:21:51.421   282   905 I netd    : networkAddRouteParcel(101, RouteInfoParcel{destination: fe80::/64, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+1242:10-31 16:21:51.476   986   986 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: ImsService is not available for the subscription specified. (code: 1)
+1255:10-31 16:21:51.526   282   905 I netd    : networkAddRouteParcel(101, RouteInfoParcel{destination: 10.0.2.0/24, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.03ms>
+1256:10-31 16:21:51.526   484   699 E ConnectivityService: Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+1258:10-31 16:21:51.526   282   905 I netd    : networkAddRouteParcel(101, RouteInfoParcel{destination: 0.0.0.0/0, ifName: wlan0, nextHop: 10.0.2.2, mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+1260:10-31 16:21:51.555   484   699 E ConnectivityService: Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+1357:10-31 16:21:52.273   986   986 D CarrierSvcBindHelper: onPackageAdded: com.sudosoc.sudoquran
+1405:10-31 16:21:52.384  1056  1327 W AsyncOperation: OperationException[Status{statusCode=Empty (package not registered?) or malformed snapshot token for null: , resolution=null}]
+1421:10-31 16:21:52.425   986   986 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: ImsService is not available for the subscription specified. (code: 1)
+1552:10-31 16:21:52.602  2546  2546 W dosoc.sudoquran: type=1400 audit(0.0:15): avc: denied { read } for name="max_map_count" dev="proc" ino=52689 scontext=u:r:untrusted_app:s0:c174,c256,c512,c768 tcontext=u:object_r:proc_max_map_count:s0 tclass=file permissive=0 app=com.sudosoc.sudoquran
+1558:10-31 16:21:52.658  2546  2644 I flutter : [IMPORTANT:flutter/shell/platform/android/android_context_gl_impeller.cc(104)] Using the Impeller rendering backend (OpenGLES).
+1587:10-31 16:21:52.749   484  2188 D CoreBackPreview: Window{6c4f00a u0 com.sudosoc.sudoquran/com.sudosoc.sudoquran.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@d5c8e98, mPriority=0}
+1657:10-31 16:21:53.123   986   986 D ImsResolver: maybeAddedImsService, packageName: com.sudosoc.sudoquran
+1677:10-31 16:21:53.199   484  1808 I MediaSessionStack: addSession to bottom of stack | record: com.sudosoc.sudoquran/media-session (userId=0)
+1681:10-31 16:21:53.213  2546  2546 I System.out: flutterEngine warmed up
+1803:10-31 16:21:53.795  2476  2732 W WPCategoryProvider: android.content.pm.PackageManager$NameNotFoundException: com.google.pixel.livewallpaper
+1917:10-31 16:21:54.137   484  1545 I MediaSessionStack: onPlaybackStateChanged - Pushing session to top | record: com.sudosoc.sudoquran/media-session (userId=0)
+1990:10-31 16:21:54.381  1754  2428 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:2956)
+1991:10-31 16:21:54.381  1754  2428 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
+2183:10-31 16:21:54.947   484  1884 I MediaFocusControl: requestAudioFocus() from uid/pid 10174/2546 AA=USAGE_MEDIA/CONTENT_TYPE_UNKNOWN clientId=android.media.AudioManager@b242e15com.ryanheise.audio_session.AndroidAudioManager$Singleton$$ExternalSyntheticLambda26@db0352a callingPack=com.sudosoc.sudoquran req=1 flags=0x0 sdk=36
+2209:10-31 16:21:55.092   484  1744 I MediaSessionStack: onPlaybackStateChanged - Pushing session to top | record: com.sudosoc.sudoquran/media-session (userId=0)
+2213:10-31 16:21:55.155   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2215:10-31 16:21:55.184   959   959 I MediaPlayerList: Adding wrapped media player: com.sudosoc.sudoquran at key: 1
+2217:10-31 16:21:55.212   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2218:10-31 16:21:55.218   959   959 I MediaPlayerList: Adding wrapped media player: com.sudosoc.sudoquran at key: 1
+2220:10-31 16:21:55.232   484   484 D MediaSessionService: Media button session is changed to com.sudosoc.sudoquran/media-session (userId=0)
+2233:10-31 16:21:55.263   959   959 I MediaPlayerList: onMediaKeyEventSessionChanged: token=com.sudosoc.sudoquran
+2241:10-31 16:21:55.271   959   959 D MediaPlayerList: setActivePlayer(): setting player to com.sudosoc.sudoquran
+2311:10-31 16:21:55.374   959   959 I MediaPlayerList: onMediaKeyEventSessionChanged: token=com.sudosoc.sudoquran
+2312:10-31 16:21:55.379   959   959 D MediaPlayerList: setActivePlayer(): setting player to com.sudosoc.sudoquran
+2319:10-31 16:21:55.380   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2320:10-31 16:21:55.380   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2329:10-31 16:21:55.396   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2330:10-31 16:21:55.397   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2343:10-31 16:21:55.466   484   524 W BatteryExternalStatsWorker: timeout or interrupt reading modem stats: java.util.concurrent.TimeoutException
+2462:10-31 16:21:55.666   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=695, buffered position=20819, speed=1.0, updated=82932, actions=16252911, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=0, error=null}
+2463:10-31 16:21:55.666   959   959 W AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran tried to update with no new data
+2464:10-31 16:21:55.667   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=695, buffered position=20819, speed=1.0, updated=82932, actions=16252911, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=0, error=null}
+2465:10-31 16:21:55.667   959   959 W AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran tried to update with no new data
+2475:10-31 16:21:55.708   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2476:10-31 16:21:55.708   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2485:10-31 16:21:55.710   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2486:10-31 16:21:55.710   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2493:10-31 16:21:55.715   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2494:10-31 16:21:55.715   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2505:10-31 16:21:55.717   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2506:10-31 16:21:55.717   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2551:10-31 16:21:55.962  1754  2357 W SnapshotHandler: java.io.FileNotFoundException: /data/user_de/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.performance.primes#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+2576:10-31 16:21:55.962  1754  2357 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+2628:10-31 16:21:56.239  1752  2451 E AwarenessRouterSyncMgr: Exception while syncing fences
+2629:10-31 16:21:56.239  1752  2451 E AwarenessRouterSyncMgr: java.util.concurrent.ExecutionException: java.lang.IllegalStateException: Account associated with identity was null
+2641:10-31 16:21:56.239  1752  2451 E AwarenessRouterSyncMgr: Caused by: java.lang.IllegalStateException: Account associated with identity was null
+2794:10-31 16:21:56.553  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@6919a66
+2816:10-31 16:21:56.554  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@f6f903e
+2839:10-31 16:21:56.561   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2840:10-31 16:21:56.561   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2866:10-31 16:21:56.570   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2867:10-31 16:21:56.570   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2923:10-31 16:21:56.853   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2924:10-31 16:21:56.853   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2935:10-31 16:21:56.855   959   959 D MediaPlayerList: onActiveSessionsChanged: controller: com.sudosoc.sudoquran
+2936:10-31 16:21:56.855   959   959 D MediaPlayerList: Already have a controller for the player: com.sudosoc.sudoquran, updating instead
+2958:10-31 16:21:56.920  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@7cc059e
+2980:10-31 16:21:56.920  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@be7704c
+3002:10-31 16:21:56.920  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@76eddaa
+3024:10-31 16:21:56.920  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@b414538
+3046:10-31 16:21:56.920  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@2b52a76
+3068:10-31 16:21:56.920  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@6617ce4
+3090:10-31 16:21:56.920  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@7417802
+3113:10-31 16:21:56.921  2029  2473 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@52b8350
+3281:10-31 16:21:57.771  1020  1122 I Launcher.IconCache: Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.sudosoc.sudoquran/com.sudosoc.sudoquran.MainActivity}
+3311:10-31 16:21:58.015  1020  2727 E OneSearchSuggestProvider: io.grpc.StatusRuntimeException: UNKNOWN
+3321:10-31 16:21:58.015  1020  2726 E OneSearchSuggestProvider: io.grpc.StatusRuntimeException: UNKNOWN
+3339:10-31 16:21:58.097  2546  3164 D ProfileInstaller: Installing profile for com.sudosoc.sudoquran
+3591:10-31 16:21:59.014  1684  2954 W SnapshotHandler: java.io.FileNotFoundException: /data/user_de/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.performance.primes#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+3622:10-31 16:21:59.014  1684  2954 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+3688:10-31 16:21:59.336  1577  1612 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 606304 nanoseconds delay) for let@ee6790a[status=PENDING, setFuture=[lea@8bec57b[status=PENDING, info=[inputFuture=[leu@187bf98[status=PENDING, info=[inputFuture=[leu@abd13f1[status=PENDING, info=[inputFuture=[lfp@bfb1bd6[status=PENDING, info=[futures=[leu@9ea3e57[status=PENDING, info=[inputFuture=[leu@6053d44[status=PENDING, info=[inputFuture=[lgo@f7dfe2d[status=PENDING, info=[delegate=[lht@fe51f62[status=PENDING, setFuture=[leu@bea68f3[status=PENDING, info=[inputFuture=[let@dbae9b0[status=PENDING, info=[inputFuture=[lgo@9e95029[status=PENDING, info=[delegate=[lht@779cfae[status=PENDING, setFuture=[let@ab8a14f[status=PENDING, info=[function=[propagating=[cdc@3dcf0dc]]]]]]]]]], function=[propagating=[bvw@c9dc5e5]]]]], function=[propagating=[bvt@59738ba]]]]]]]]]], function=[propagating=[bvg@e88036b]]]]], function=[propagating=[cvu@b63ec8]]]]]]]], function=[propagating=[ddo@b69db61]]]]], function=[propagating=[bvx@af02686]]]]], exceptionType=[class java.lang.Throwable], fallback=[propagating=[bvt@5a16b47]]]]]]
+3782:10-31 16:21:59.707  2066  3141 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+3801:10-31 16:21:59.753  1684  2200 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.consentverifier#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+3826:10-31 16:21:59.753  1684  2200 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+3860:10-31 16:21:59.872  1056  3052 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+3871:10-31 16:21:59.931  1307  3096 W ConfigFileUtils: Failed to read asset ChimeraModuleSetList.pb: java.io.FileNotFoundException: ChimeraModuleSetList.pb
+3942:10-31 16:22:00.094  1758  3275 W ProviderInstaller: Failed to report request stats: java.lang.NoSuchMethodException: com.google.android.gms.common.security.ProviderInstallerImpl.reportRequestStats2 [class android.content.Context, long, long]
+4020:10-31 16:22:00.486   936   956 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+4147:10-31 16:22:00.904  2546  2553 I dosoc.sudoquran: Background concurrent copying GC freed 63073(2954KB) AllocSpace objects, 25(1172KB) LOS objects, 49% free, 4970KB/9941KB, paused 64us,13us total 245.223ms
+4389:10-31 16:22:01.974  2029  2823 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@2b52a76
+4432:10-31 16:22:02.150  1056  3052 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+4440:10-31 16:22:02.161  2029  2823 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@6617ce4
+4462:10-31 16:22:02.161  2029  2823 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@7417802
+4484:10-31 16:22:02.161  2029  2823 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@52b8350
+4568:10-31 16:22:02.697  1555  1555 I KeyboardDefManager: java.util.concurrent.CancellationException: Task was cancelled.
+4775:10-31 16:22:03.472  1056  1344 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+4850:10-31 16:22:04.452  1577  1612 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 2 milliseconds, 569156 nanoseconds delay) for let@83dea51[status=PENDING, setFuture=[lea@b67a2b6[status=PENDING, info=[inputFuture=[leu@d77ebb7[status=PENDING, info=[inputFuture=[leu@c6b4f24[status=PENDING, info=[inputFuture=[lfp@5a5da8d[status=PENDING, info=[futures=[leu@6433442[status=PENDING, info=[inputFuture=[leu@1958c53[status=PENDING, info=[inputFuture=[lgo@8a03990[status=PENDING, info=[delegate=[lht@3229289[status=PENDING, info=[task=[running=[NOT STARTED YET], propagating=[bwa@d54528e]]]]]]]], function=[propagating=[bvg@5e29aaf]]]]], function=[propagating=[cvu@ef75ebc]]]]]]]], function=[propagating=[ddo@b69db61]]]]], function=[propagating=[bvx@f98ce45]]]]], exceptionType=[class java.lang.Throwable], fallback=[propagating=[bvt@5a16b47]]]]]]
+4927:10-31 16:22:05.296  1020  2727 E OneSearchSuggestProvider: io.grpc.StatusRuntimeException: UNKNOWN
+4947:10-31 16:22:05.366  1056  1344 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+5017:10-31 16:22:05.752   755   846 W Tile.CustomTile: java.lang.NullPointerException: Attempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Icon.loadDrawable(android.content.Context)' on a null object reference
+5059:10-31 16:22:06.051  1056  3220 W ChimeraSrvcProxy: Failed to read the buffer size file. Using default NullBinder reply size. java.io.FileNotFoundException: /data/user_de/0/com.google.android.gms/files/binder_buffer_size.txt: open failed: ENOENT (No such file or directory)
+5074:10-31 16:22:06.106  1056  3220 I ChimeraSrvcProxy: NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl
+5117:10-31 16:22:06.481  2029  3409 E AssistantConnector: java.lang.IllegalStateException: Failed to query AGSA value. This is most likely caused by a Google signature check failure. Please make sure both of the AGSA app and the client app are either release or dev builds.
+5126:10-31 16:22:06.483  1672  2387 W ModernMediaScanner: Failed to visit /system/media: java.nio.file.NoSuchFileException: /system/media
+5140:10-31 16:22:07.126   484   504 I ActivityTaskManager: Displayed com.sudosoc.sudoquran/.MainActivity: +16s989ms
+5141:10-31 16:22:07.126   484   504 I ActivityTaskManager: Fully drawn com.sudosoc.sudoquran/.MainActivity: +16s989ms
+5146:10-31 16:22:07.336  1555  1555 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=com.sudosoc.sudoquran fieldId=-1 fieldName=null extras=null}, false)
+5182:10-31 16:22:08.198  1056  2432 I ChimeraSrvcProxy: NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl
+5194:10-31 16:22:08.431  1669  2459 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+5253:10-31 16:22:08.984   484  2009 W InputManager-JNI: Input channel object 'c6d4603 Splash Screen com.sudosoc.sudoquran (client)' was disposed without first being removed with the input manager!
+5391:10-31 16:22:10.366  1307  3096 E Auth    : java.util.concurrent.TimeoutException: Timed out waiting for Task
+5416:10-31 16:22:10.679  1056  2011 W FontLog : java.util.concurrent.TimeoutException: Waited 10000 milliseconds (plus 393223 nanoseconds delay) for dlrl@914769d[status=PENDING]
+5433:10-31 16:22:10.679  1056  1087 W FontLog : java.util.concurrent.TimeoutException: Waited 10000 milliseconds (plus 13 milliseconds, 729493 nanoseconds delay) for dlrl@44050e0[status=PENDING]
+5449:10-31 16:22:10.679  1056  2444 I ChimeraSrvcProxy: NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl
+5510:10-31 16:22:11.165  1056  2055 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+5560:10-31 16:22:11.557  1669  2458 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+5659:10-31 16:22:12.246  2029  2029 W Bugle   : java.lang.RuntimeException: fetchFonts result is not OK. (2)
+5827:10-31 16:22:13.100  1669  2459 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+5908:10-31 16:22:13.296  1056  2055 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+5950:10-31 16:22:13.344  1056  1344 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+6048:10-31 16:22:14.419  1672  2387 W ModernMediaScanner: Failed to visit /oem/media: java.nio.file.NoSuchFileException: /oem/media
+6074:10-31 16:22:14.820  1577  3045 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 1 milliseconds, 101932 nanoseconds delay) for let@cc430b1[status=PENDING, setFuture=[lea@44d996[status=PENDING, info=[inputFuture=[leu@7a08917[status=PENDING, info=[inputFuture=[leu@7e99104[status=PENDING, info=[inputFuture=[lfp@5ba26ed[status=PENDING, info=[futures=[leu@6cf922[status=PENDING, info=[inputFuture=[leu@49a9fb3[status=PENDING, info=[inputFuture=[lgo@9f0b970[status=PENDING, info=[delegate=[lht@9f44e9[status=PENDING, info=[task=[running=[NOT STARTED YET], propagating=[bwa@5856e]]]]]]]], function=[propagating=[bvg@215840f]]]]], function=[propagating=[cvu@3fffc9c]]]]]]]], function=[propagating=[ddo@b69db61]]]]], function=[propagating=[bvx@f9e46a5]]]]], exceptionType=[class java.lang.Throwable], fallback=[propagating=[bvt@5a16b47]]]]]]
+6143:10-31 16:22:15.344  1020  1020 W BcSmartspaceView: java.lang.SecurityException: No access to content://settings/secure/doze_always_on: Neither user 10154 nor current process has android.permission.INTERACT_ACROSS_USERS_FULL.
+6144:10-31 16:22:15.344  1020  1020 W BcSmartspaceView: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3011)
+6145:10-31 16:22:15.344  1020  1020 W BcSmartspaceView: 	at android.os.Parcel.createException(Parcel.java:2995)
+6146:10-31 16:22:15.344  1020  1020 W BcSmartspaceView: 	at android.os.Parcel.readException(Parcel.java:2978)
+6147:10-31 16:22:15.344  1020  1020 W BcSmartspaceView: 	at android.os.Parcel.readException(Parcel.java:2920)
+6171:10-31 16:22:15.344  1020  1020 W BcSmartspaceView: Caused by: android.os.RemoteException: Remote stack trace:
+6243:10-31 16:22:15.768  1669  2458 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+6283:10-31 16:22:16.200  1307  3374 W ConfigFileUtils: Failed to read asset ChimeraModuleSetList.pb: java.io.FileNotFoundException: ChimeraModuleSetList.pb
+6343:10-31 16:22:17.591   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=17, buffered position=5903, speed=1.0, updated=104743, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+6344:10-31 16:22:17.595   959   959 V AudioMediaPlayerWrapper: trySendMediaUpdate(): Metadata has been updated for com.sudosoc.sudoquran
+6368:10-31 16:22:17.597   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=17, buffered position=5903, speed=1.0, updated=104743, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+6369:10-31 16:22:17.598   959   959 V AudioMediaPlayerWrapper: trySendMediaUpdate(): Metadata has been updated for com.sudosoc.sudoquran
+6383:10-31 16:22:17.714   959   959 V AudioMediaPlayerWrapper: onQueueChanged(): com.sudosoc.sudoquran
+6384:10-31 16:22:17.724   959   959 W AudioMediaPlayerWrapper: onQueueChanged(): com.sudosoc.sudoquran tried to update with no new data
+6385:10-31 16:22:17.726   959   959 V AudioMediaPlayerWrapper: onQueueChanged(): com.sudosoc.sudoquran
+6386:10-31 16:22:17.726   959   959 W AudioMediaPlayerWrapper: onQueueChanged(): com.sudosoc.sudoquran tried to update with no new data
+6398:10-31 16:22:18.080   755   755 D MediaResumeListener: Checking for service component for com.sudosoc.sudoquran
+6400:10-31 16:22:18.095   755   855 E KeyguardUpdateMonitorLog: java.lang.Exception: Called by
+6591:10-31 16:22:19.110  2029  2832 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@6919a66
+6737:10-31 16:22:20.093  2029  3158 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@6919a66
+6759:10-31 16:22:20.094  2029  3158 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@f6f903e
+6816:10-31 16:22:20.483  1577  3045 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 1 milliseconds, 886212 nanoseconds delay) for let@8a7b082[status=PENDING, setFuture=[lea@db9f393[status=PENDING, info=[inputFuture=[leu@715afd0[status=PENDING, info=[inputFuture=[leu@aad6bc9[status=PENDING, info=[inputFuture=[lfp@92452ce[status=PENDING, info=[futures=[leu@f0635ef[status=PENDING, info=[inputFuture=[leu@fedf8fc[status=PENDING, info=[inputFuture=[lgo@917fb85[status=PENDING, info=[delegate=[lht@bb6cdda[status=PENDING, info=[task=[running=[NOT STARTED YET], propagating=[bwa@2a420b]]]]]]]], function=[propagating=[bvg@19fa8e8]]]]], function=[propagating=[cvu@1e1cb01]]]]]]]], function=[propagating=[ddo@b69db61]]]]], function=[propagating=[bvx@cc3eda6]]]]], exceptionType=[class java.lang.Throwable], fallback=[propagating=[bvt@5a16b47]]]]]]
+6859:10-31 16:22:20.953  1307  3515 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+6929:10-31 16:22:21.820   755   855 E KeyguardUpdateMonitorLog: java.lang.Exception: Called by
+6940:10-31 16:22:21.825   755   846 D MediaResumeListener: Testing if we can connect to ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+6956:10-31 16:22:22.040  1056  2432 W FontLog : java.util.concurrent.TimeoutException: Waited 10000 milliseconds (plus 163136 nanoseconds delay) for dlrl@b8dc757[status=PENDING]
+7039:10-31 16:22:23.306  1669  2458 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+7117:10-31 16:22:24.099   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=5915, buffered position=5915, speed=1.0, updated=111341, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+7118:10-31 16:22:24.101   959   959 V AudioMediaPlayerWrapper: trySendMediaUpdate(): Metadata has been updated for com.sudosoc.sudoquran
+7124:10-31 16:22:24.105   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=5915, buffered position=5915, speed=1.0, updated=111341, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+7136:10-31 16:22:24.172   959   959 V AudioMediaPlayerWrapper: trySendMediaUpdate(): Metadata has been updated for com.sudosoc.sudoquran
+7161:10-31 16:22:24.241   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=5915, buffered position=5915, speed=1.0, updated=111341, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+7163:10-31 16:22:24.254   959   959 W AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran tried to update with no new data
+7164:10-31 16:22:24.275   959   959 V AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran : PlaybackState {state=3, position=5915, buffered position=5915, speed=1.0, updated=111341, actions=16252895, custom actions=[Action:mName='Stop, mIcon=2131165276, mExtras=null], active item id=1, error=null}
+7165:10-31 16:22:24.293   959   959 W AudioMediaPlayerWrapper: onPlaybackStateChanged(): com.sudosoc.sudoquran tried to update with no new data
+7169:10-31 16:22:24.568  1307  1307 E GmsCoreLogger: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException
+7208:10-31 16:22:24.568  1307  1307 E GmsCoreLogger: Caused by: java.util.concurrent.TimeoutException
+7325:10-31 16:22:25.429   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+7394:10-31 16:22:26.708  2029  2832 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@f6f903e
+7418:10-31 16:22:26.708  2029  3158 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@7cc059e
+7440:10-31 16:22:26.709  2029  2832 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@7cc059e
+7463:10-31 16:22:26.715  2029  2832 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@be7704c
+7485:10-31 16:22:26.715  2029  3158 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@be7704c
+7508:10-31 16:22:26.728  2029  2251 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@b414538
+7530:10-31 16:22:26.729  2029  2832 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@76eddaa
+7552:10-31 16:22:26.729  2029  2832 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@b414538
+7574:10-31 16:22:26.729  2029  3158 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@76eddaa
+7596:10-31 16:22:26.729  2029  3158 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@b414538
+7621:10-31 16:22:26.885  2029  2832 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@2b52a76
+7685:10-31 16:22:27.445   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+7715:10-31 16:22:27.860  2029  2832 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@6617ce4
+7741:10-31 16:22:27.980  1307  3041 E FA-SVC  : Failed to get app instance id. appId: com.google.android.apps.youtube.music, java.util.concurrent.TimeoutException: azoo.y(:com.google.android.gms@231818047@23.18.18 (190800-535401451):2)
+7748:10-31 16:22:28.157  2029  3158 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@2b52a76
+7782:10-31 16:22:28.943  2029  3158 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@6617ce4
+7812:10-31 16:22:29.203  2029  3158 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@7417802
+7849:10-31 16:22:29.362  2029  2251 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@7417802
+7873:10-31 16:22:29.371  2029  2832 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@52b8350
+7899:10-31 16:22:29.407   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+7912:10-31 16:22:29.437  2029  2251 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@52b8350
+7934:10-31 16:22:29.511   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+7946:10-31 16:22:29.559  1307  3198 E FA-SVC  : Failed to get app instance id. appId: com.google.android.youtube, java.util.concurrent.TimeoutException: azoo.y(:com.google.android.gms@231818047@23.18.18 (190800-535401451):2)
+7957:10-31 16:22:29.912   755   846 D ResumeMediaBrowser: Service connected for ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+7959:10-31 16:22:29.970   755   846 D MediaResumeListener: Connected to ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+7965:10-31 16:22:30.161  1020  1122 I Launcher.IconCache: Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.sudosoc.sudoquran/com.sudosoc.sudoquran.MainActivity}
+7976:10-31 16:22:30.214   755   846 D ResumeMediaBrowser: No children found for ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+7978:10-31 16:22:30.231   755   846 E MediaResumeListener: Cannot resume with ComponentInfo{com.sudosoc.sudoquran/com.ryanheise.audioservice.AudioService}
+8016:10-31 16:22:30.414   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+8035:10-31 16:22:30.530  1577  3045 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 296721 nanoseconds delay) for let@e8a413a[status=PENDING, setFuture=[lea@d99a1eb[status=PENDING, info=[inputFuture=[leu@81bb48[status=PENDING, info=[inputFuture=[leu@ffcdde1[status=PENDING, info=[inputFuture=[lfp@74b3706[status=PENDING, info=[futures=[leu@a6e71c7[status=PENDING, info=[inputFuture=[leu@e9b43f4[status=PENDING, info=[inputFuture=[lgo@988771d[status=PENDING, info=[delegate=[lht@d3bd92[status=PENDING, info=[task=[running=[NOT STARTED YET], propagating=[bwa@ed66363]]]]]]]], function=[propagating=[bvg@522ab60]]]]], function=[propagating=[cvu@c3a6819]]]]]]]], function=[propagating=[ddo@b69db61]]]]], function=[propagating=[bvx@cec20de]]]]], exceptionType=[class java.lang.Throwable], fallback=[propagating=[bvt@5a16b47]]]]]]
+8264:10-31 16:22:33.331   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+8315:10-31 16:22:34.100  1056  3547 E dlpn    : RuntimeException while executing runnable dlqc{qze@a45432a} with executor MoreExecutors.directExecutor()
+8316:10-31 16:22:34.100  1056  3547 E dlpn    : java.lang.NullPointerException: Attempt to get length of null array
+8403:10-31 16:22:35.143  1754  3757 W earchbox:search: Verification of void it.<init>(java.lang.String, java.util.Collection, org.chromium.net.RequestFinishedInfo$Metrics, int, org.chromium.net.UrlResponseInfo, org.chromium.net.CronetException) took 653.094ms (24.50 bytecodes/s) (1656B approximate peak alloc)
+8411:10-31 16:22:35.299   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+8808:10-31 16:22:36.757   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+8906:10-31 16:22:37.781   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+8938:10-31 16:22:38.429  1754  2366 W A       : Exception while fetching versionCode for package[com.google.android.apps.tv.dreamx].
+8939:10-31 16:22:38.429  1754  2366 W A       : android.content.pm.PackageManager$NameNotFoundException: com.google.android.apps.tv.dreamx
+9006:10-31 16:22:39.591   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+9028:10-31 16:22:39.660  1754  2366 W A       : Exception while fetching versionCode for package[com.google.android.apps.tv.launcherx].
+9029:10-31 16:22:39.660  1754  2366 W A       : android.content.pm.PackageManager$NameNotFoundException: com.google.android.apps.tv.launcherx
+9064:10-31 16:22:39.948  3809  3809 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+9066:10-31 16:22:39.978  3809  3809 I AndroidRuntime: Using default boot image
+9067:10-31 16:22:39.978  3809  3809 I AndroidRuntime: Leaving lock profiling enabled
+9095:10-31 16:22:40.563  3809  3809 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+9096:10-31 16:22:40.567  3809  3809 W Monkey  : args: [-p, com.sudosoc.sudoquran, -c, android.intent.category.LAUNCHER, 1]
+9098:10-31 16:22:40.572  3809  3809 W Monkey  :  arg: "com.sudosoc.sudoquran"
+9102:10-31 16:22:40.572  3809  3809 W Monkey  : data="com.sudosoc.sudoquran"
+9115:10-31 16:22:40.611   484   502 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.sudosoc.sudoquran/.MainActivity} from uid 2000
+9139:10-31 16:22:40.651   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+9162:10-31 16:22:40.721  3809  3809 I AndroidRuntime: VM exiting with result code 0.
+9165:10-31 16:22:40.783  2029  2344 W Bugle   : java.lang.IllegalStateException: Failed to query AGSA value. This is most likely caused by a Google signature check failure. Please make sure both of the AGSA app and the client app are either release or dev builds.
+9215:10-31 16:22:41.603   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+9260:10-31 16:22:42.308  1307  3492 E constellation: java.io.IOException: AUTHENTICATION_FAILED
+9449:10-31 16:22:44.884  1056  3726 I NearbyDiscovery: java.util.concurrent.TimeoutException: Timed out waiting for Task
+9588:10-31 16:22:46.787   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+9782:10-31 16:22:48.937  1056  3937 E bwel    : java.util.concurrent.TimeoutException: Timed out waiting for Task
+9828:10-31 16:22:49.662  1056  3726 I NearbyDiscovery: java.util.concurrent.TimeoutException: Timed out waiting for Task
+9861:10-31 16:22:50.012   959   971 W UnsafeUtil: platform method missing - proto runtime falling back to safer methods: java.lang.NoSuchMethodException: sun.misc.Unsafe.copyMemory [class java.lang.Object, long, class java.lang.Object, long, long]
+9904:10-31 16:22:50.205  1307  3882 I BlockstoreStorage: Clearing Blockstore Data for package com.sudosoc.sudoquran [CONTEXT service_id=258 ]
+9938:10-31 16:22:50.753  1577  3045 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 10 milliseconds, 888605 nanoseconds delay) for let@cec4206[status=PENDING, setFuture=[lea@35a20c7[status=PENDING, info=[inputFuture=[leu@446c6f4[status=PENDING, info=[inputFuture=[leu@7793e1d[status=PENDING, info=[inputFuture=[lfp@6fa7892[status=PENDING, info=[futures=[leu@c4e0263[status=PENDING, info=[inputFuture=[leu@d835e60[status=PENDING, info=[inputFuture=[lgo@5f09f19[status=PENDING, info=[delegate=[lht@e438bde[status=PENDING, info=[task=[running=[NOT STARTED YET], propagating=[bwa@31461bf]]]]]]]], function=[propagating=[bvg@e30008c]]]]], function=[propagating=[cvu@2e313d5]]]]]]]], function=[propagating=[ddo@b69db61]]]]], function=[propagating=[bvx@67887ea]]]]], exceptionType=[class java.lang.Throwable], fallback=[propagating=[bvt@5a16b47]]]]]]
+9951:10-31 16:22:50.903   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+10211:10-31 16:22:53.438  2029  2244 W Bugle   : java.io.IOException: AUTHENTICATION_FAILED
+10249:10-31 16:22:53.819  1056  3814 W SemanticLocation: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 1 milliseconds, 724153 nanoseconds delay) for dlnx@5c19c05[status=PENDING, info=[function=[bzrs@1d7245a]]]
+10367:10-31 16:22:55.204  1072  1467 W UnsafeUtil: platform method missing - proto runtime falling back to safer methods: java.lang.NoSuchMethodException: sun.misc.Unsafe.copyMemory [class java.lang.Object, long, class java.lang.Object, long, long]
+10419:10-31 16:22:55.694  1056  1497 W IsDeviceCompliantOp: java.util.concurrent.TimeoutException: Waited 60 seconds (plus 3908628 nanoseconds delay) for dlny@fe66041[status=PENDING, info=[inputFuture=[dlnx@9b0f9e6[status=PENDING, setFuture=[dlnx@a62ab27[status=PENDING, setFuture=[dlny@352f1d4[status=PENDING, info=[inputFuture=[dlny@df7bf7d[status=PENDING, info=[inputFuture=[dlnx@682ce72[status=PENDING, info=[inputFuture=[dlne@ec4d2c3[status=PENDING, info=[inputFuture=[dlny@7d75740[status=PENDING, info=[inputFuture=[aplc@ec5d679], function=[apmt@c2b5fbe]]]], exceptionType=[class enms], fallback=[apmu@97d81f]]]], function=[aplq@b7aa76c]]]], function=[apms@bc46135]]]], function=[aplo@c39b9ca]]]]]]]], function=[apml@76bd73b]]]
+10473:10-31 16:22:56.299  1307  1367 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10537:10-31 16:22:56.678  2029  2421 W Bugle   : java.io.IOException: AUTHENTICATION_FAILED
+10567:10-31 16:22:56.801  1307  1367 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10688:10-31 16:22:57.817  1307  3403 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10739:10-31 16:22:58.324  1307  3403 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10767:10-31 16:22:58.834  1307  3183 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10771:10-31 16:22:58.945  1056  1496 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10785:10-31 16:22:59.206   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+10805:10-31 16:22:59.342  1307  3183 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10824:10-31 16:22:59.924  1307  3393 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10836:10-31 16:23:00.160  1056  1496 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10884:10-31 16:23:01.429  1307  3393 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10952:10-31 16:23:02.991   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
+11085:10-31 16:23:03.925   484   578 E RoleControllerManager: java.util.concurrent.TimeoutException
