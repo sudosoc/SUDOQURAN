@@ -56,14 +56,20 @@ class Settings extends ChangeNotifier {
   String get driveStyle => _opt('driveStyle', 'luxury');
 
   // ---- speedometer drive style
-  String get carGauge => _opt('carGauge', 'analog'); // analog | digital | neon | sport | minimal
+  static const carGaugeIds = ['halo', 'hud', 'liquid', 'orbit', 'equalizer', 'star', 'segments', 'radar', 'zen', 'tunnel'];
+  String get carGauge {
+    final g = _opt('carGauge', 'halo');
+    return carGaugeIds.contains(g) ? g : 'halo';
+  }
   int get carMax => _opt('carMax', 220);
   bool get carMph => _opt('carMph', false);
-  String get carModel => _opt('carModel', 'sedan'); // sedan | suv | hatch | sport | pickup | none
-  int get carColor => _opt('carColor', 0xFFEDEDED);
   int get carLimit => _opt('carLimit', 0); // warn above this speed, 0 = off
-  bool get carRoad => _opt('carRoad', true);
-  String get carView => _opt('carView', 'side'); // side | top
+  String get carFx => _opt('carFx', 'warp'); // warp | flow | aurora | dots | none
+  int get carAccent => _opt('carAccent', 0); // 0 = theme accent
+  String get carLayout => _opt('carLayout', 'left'); // left | right | center | hero
+  String get carTileStyle => _opt('carTileStyle', 'glass'); // glass | line | bare
+  bool get carDemo => _opt('carDemo', false);
+  bool get carPlayer => _opt('carPlayer', true);
   List<String> get carTiles {
     final v = extra['carTiles'];
     if (v is List) return v.map((e) => '$e').toList();

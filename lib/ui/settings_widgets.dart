@@ -85,15 +85,27 @@ class ChoiceRow<T> extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
             onTap: () => onChanged(v),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: v == value ? AppColors.gold.withOpacity(0.22) : Colors.white.withOpacity(0.05),
+                color: v == value ? AppColors.gold : Colors.white.withOpacity(0.05),
                 border: Border.all(color: v == value ? AppColors.gold : Colors.white24, width: v == value ? 2 : 1),
+                boxShadow: v == value ? [BoxShadow(color: AppColors.gold.withOpacity(0.35), blurRadius: 14)] : null,
               ),
-              child: Text(label,
-                  style: TextStyle(fontSize: 17, fontWeight: v == value ? FontWeight.w800 : FontWeight.w500)),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                if (v == value) ...[
+                  Icon(Icons.check_rounded, size: 20, color: AppColors.bg0),
+                  const SizedBox(width: 6),
+                ],
+                Text(label,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: v == value ? FontWeight.w900 : FontWeight.w500,
+                      color: v == value ? AppColors.bg0 : AppColors.text,
+                    )),
+              ]),
             ),
           ),
       ],

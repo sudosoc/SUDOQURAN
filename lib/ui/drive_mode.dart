@@ -23,7 +23,7 @@ class DriveStyle {
 }
 
 const driveStyles = <DriveStyle>[
-  DriveStyle('car', 'عداد السرعة', 'عداد حقيقي بالـ GPS + عربيتك + كمبيوتر الرحلة — كله بيتخصص', Icons.directions_car_filled_rounded),
+  DriveStyle('car', 'عداد السرعة', 'عداد GPS حقيقي بـ 10 أشكال متحركة + كمبيوتر رحلة — كله بيتخصص', Icons.directions_car_filled_rounded),
   DriveStyle('luxury', 'فخامة', 'أسود صافي، اسم السورة ضخم وحلقة تقدّم ذهبية', Icons.diamond_outlined),
   DriveStyle('cockpit', 'تابلوه', 'عدادات زي عدادات العربية', Icons.speed_rounded),
   DriveStyle('ambient', 'أجواء', 'ألوان بتتحرك بهدوء ورا الكلام', Icons.blur_on_rounded),
