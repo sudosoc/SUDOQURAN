@@ -6,7 +6,9 @@ import 'adhan_banner.dart';
 import 'drive_mode.dart';
 import 'glass.dart';
 import 'now_playing.dart';
+import 'prayer_tab.dart';
 import 'quran_page.dart';
+import 'radio_page.dart';
 import 'ruqyah_page.dart';
 import 'settings_page.dart';
 
@@ -37,6 +39,8 @@ class _HomeShellState extends State<HomeShell> {
   static const _items = [
     (Icons.menu_book_rounded, 'القرآن'),
     (Icons.shield_moon_rounded, 'الرقية\nوالأذكار'),
+    (Icons.mosque_rounded, 'الصلاة'),
+    (Icons.sensors_rounded, 'البث\nالمباشر'),
     (Icons.tune_rounded, 'الإعدادات'),
   ];
 
@@ -62,6 +66,8 @@ class _HomeShellState extends State<HomeShell> {
                     children: const [
                       QuranSection(),
                       RuqyahSection(),
+                      PrayerSection(),
+                      RadioSection(),
                       SettingsSection(),
                     ],
                   ),
@@ -114,17 +120,23 @@ class _SideRail extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 26),
-            for (var i = 0; i < items.length; i++)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 14),
-                child: _RailItem(
-                  icon: items[i].$1,
-                  label: items[i].$2,
-                  selected: index == i,
-                  onTap: () => onTap(i),
-                ),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(children: [
+                  for (var i = 0; i < items.length; i++)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _RailItem(
+                        icon: items[i].$1,
+                        label: items[i].$2,
+                        selected: index == i,
+                        onTap: () => onTap(i),
+                      ),
+                    ),
+                ]),
               ),
-            const Spacer(),
+            ),
             ListenableBuilder(
               listenable: Library.instance,
               builder: (context, _) {
@@ -198,7 +210,7 @@ class _RailItem extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           width: 96,
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             color: selected ? AppColors.gold.withOpacity(0.18) : Colors.transparent,
@@ -207,7 +219,7 @@ class _RailItem extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Icon(icon, size: 38, color: selected ? AppColors.gold : AppColors.muted),
+              Icon(icon, size: 34, color: selected ? AppColors.gold : AppColors.muted),
               const SizedBox(height: 6),
               Text(label,
                   textAlign: TextAlign.center,

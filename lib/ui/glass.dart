@@ -59,6 +59,7 @@ class AppStyle {
   static double blur = 22;
   static bool pattern = true;
   static bool animations = true;
+  static String wallpaper = 'static';
 }
 
 /// Live palette — values change when the user picks another theme.
@@ -244,16 +245,165 @@ class GlassButton extends StatelessWidget {
   }
 }
 
-/// Deep gradient + glowing orbs + faint Islamic star pattern.
-class AppBackground extends StatelessWidget {
+/// Deep gradient + glowing orbs + faint Islamic star pattern, optionally
+/// with a live layer (stars / aurora / lanterns / geometry).
+class AppBackground extends StatefulWidget {
   const AppBackground({super.key});
 
   @override
+  State<AppBackground> createState() => _AppBackgroundState();
+}
+
+class _AppBackgroundState extends State<AppBackground> with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(vsync: this, duration: const Duration(seconds: 40));
+
+  bool get _live => AppStyle.wallpaper != 'static' && AppStyle.animations;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_live) _c.repeat();
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const RepaintBoundary(
-      child: CustomPaint(painter: _BgPainter(), size: Size.infinite),
+    return RepaintBoundary(
+      child: Stack(fit: StackFit.expand, children: [
+        const CustomPaint(painter: _BgPainter(), size: Size.infinite),
+        if (AppStyle.wallpaper != 'static')
+          AnimatedBuilder(
+            animation: _c,
+            builder: (context, _) => CustomPaint(painter: _LivePainter(AppStyle.wallpaper, _c.value)),
+          ),
+      ]),
     );
   }
+}
+
+class _LivePainter extends CustomPainter {
+  final String type;
+  final double t;
+  _LivePainter(this.type, this.t);
+
+  static final _rnd = List.generate(140, (i) {
+    final r = math.Random(i * 104729 + 7);
+    return [r.nextDouble(), r.nextDouble(), r.nextDouble(), r.nextDouble()];
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    switch (type) {
+      case 'stars':
+        _stars(canvas, size);
+      case 'aurora':
+        _aurora(canvas, size);
+      case 'lanterns':
+        _lanterns(canvas, size);
+      case 'geometry':
+        _geometry(canvas, size);
+    }
+  }
+
+  void _stars(Canvas canvas, Size s) {
+    for (var i = 0; i < 120; i++) {
+      final v = _rnd[i];
+      final tw = 0.25 + 0.75 * (math.sin(2 * math.pi * (t * (3 + v[2] * 6) + v[3]))).abs();
+      final p = Offset(v[0] * s.width, v[1] * s.height);
+      final r = 0.8 + v[2] * 1.8;
+      canvas.drawCircle(p, r * 3, Paint()..color = Colors.white.withOpacity(0.05 * tw));
+      canvas.drawCircle(p, r, Paint()..color = Colors.white.withOpacity(0.85 * tw));
+    }
+    // crescent
+    final c = Offset(s.width * 0.12, s.height * 0.16);
+    final glow = Paint()
+      ..shader = RadialGradient(colors: [AppColors.gold.withOpacity(0.25), AppColors.gold.withOpacity(0)])
+          .createShader(Rect.fromCircle(center: c, radius: 120));
+    canvas.drawCircle(c, 120, glow);
+    final moon = Path()..addOval(Rect.fromCircle(center: c, radius: 34));
+    final cut = Path()..addOval(Rect.fromCircle(center: c + const Offset(14, -8), radius: 30));
+    canvas.drawPath(Path.combine(PathOperation.difference, moon, cut), Paint()..color = AppColors.gold.withOpacity(0.9));
+    // shooting star every cycle
+    final st = (t * 4) % 1.0;
+    if (st < 0.12) {
+      final k = st / 0.12;
+      final a = Offset(s.width * (0.9 - 0.5 * k), s.height * (0.05 + 0.25 * k));
+      canvas.drawLine(a, a + const Offset(90, -45),
+          Paint()
+            ..shader = LinearGradient(colors: [Colors.white.withOpacity(0.9 * (1 - k)), Colors.transparent])
+                .createShader(Rect.fromPoints(a, a + const Offset(90, -45)))
+            ..strokeWidth = 2);
+    }
+  }
+
+  void _aurora(Canvas canvas, Size s) {
+    final colors = [AppColors.emerald, AppColors.gold, AppColors.teal];
+    for (var i = 0; i < 3; i++) {
+      final a = 2 * math.pi * (t * 2 + i / 3);
+      final c = Offset(s.width * (0.5 + 0.38 * math.cos(a)), s.height * (0.5 + 0.32 * math.sin(a * 1.4)));
+      final r = s.height * 0.6;
+      canvas.drawCircle(
+          c,
+          r,
+          Paint()
+            ..shader = RadialGradient(colors: [colors[i].withOpacity(0.28), colors[i].withOpacity(0)])
+                .createShader(Rect.fromCircle(center: c, radius: r)));
+    }
+  }
+
+  void _lanterns(Canvas canvas, Size s) {
+    for (var i = 0; i < 16; i++) {
+      final v = _rnd[i];
+      final prog = (t * (1.5 + v[2] * 2) + v[3]) % 1.0;
+      final y = s.height * (1.1 - 1.25 * prog);
+      final x = s.width * v[0] + 18 * math.sin(2 * math.pi * (prog * 2 + v[1]));
+      final sc = 0.6 + v[2] * 0.8;
+      final fade = (prog < 0.15 ? prog / 0.15 : (prog > 0.85 ? (1 - prog) / 0.15 : 1.0)).clamp(0.0, 1.0).toDouble();
+      final c = Offset(x, y);
+      canvas.drawCircle(
+          c,
+          46 * sc,
+          Paint()
+            ..shader = RadialGradient(colors: [AppColors.gold.withOpacity(0.35 * fade), AppColors.gold.withOpacity(0)])
+                .createShader(Rect.fromCircle(center: c, radius: 46 * sc)));
+      final body = RRect.fromRectAndRadius(Rect.fromCenter(center: c, width: 16 * sc, height: 24 * sc), Radius.circular(6 * sc));
+      canvas.drawRRect(body, Paint()..color = Color.lerp(AppColors.gold, Colors.orangeAccent, 0.3)!.withOpacity(0.8 * fade));
+      canvas.drawLine(c - Offset(0, 12 * sc), c - Offset(0, 20 * sc),
+          Paint()
+            ..color = AppColors.gold.withOpacity(0.7 * fade)
+            ..strokeWidth = 1.5);
+    }
+  }
+
+  void _geometry(Canvas canvas, Size s) {
+    final c = Offset(s.width * 0.5, s.height * 0.5);
+    for (var ring = 0; ring < 4; ring++) {
+      final r = s.height * (0.18 + ring * 0.16);
+      final rot = 2 * math.pi * t * (ring.isEven ? 1 : -1) / (ring + 1);
+      final p = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..color = AppColors.gold.withOpacity(0.10 - ring * 0.015);
+      for (final extra in [0.0, math.pi / 4]) {
+        final path = Path();
+        for (var i = 0; i < 4; i++) {
+          final a = rot + extra + i * math.pi / 2 + math.pi / 4;
+          final pt = c + Offset(math.cos(a), math.sin(a)) * r;
+          i == 0 ? path.moveTo(pt.dx, pt.dy) : path.lineTo(pt.dx, pt.dy);
+        }
+        canvas.drawPath(path..close(), p);
+      }
+      canvas.drawCircle(c, r * 0.72, p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _LivePainter old) => old.t != t || old.type != type;
 }
 
 class _BgPainter extends CustomPainter {

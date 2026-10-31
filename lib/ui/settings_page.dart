@@ -5,6 +5,7 @@ import '../services/library.dart';
 import '../services/settings.dart';
 import '../services/sources.dart';
 import 'about_tab.dart';
+import 'backup_card.dart';
 import 'downloads_page.dart';
 import 'drive_tab.dart';
 import 'interface_tab.dart';
@@ -28,7 +29,6 @@ class _SettingsSectionState extends State<SettingsSection> {
     (Icons.dashboard_customize_rounded, 'الواجهة'),
     (Icons.palette_rounded, 'الثيمات'),
     (Icons.directions_car_rounded, 'وضع السواقة'),
-    (Icons.mosque_rounded, 'الصلاة'),
     (Icons.download_for_offline_rounded, 'التحميل'),
     (Icons.person_rounded, 'عن المطور'),
   ];
@@ -73,7 +73,6 @@ class _SettingsSectionState extends State<SettingsSection> {
               InterfaceTab(),
               ThemesTab(),
               DriveTab(),
-              PrayerTab(),
               DownloadsPage(),
               AboutTab(),
             ],
@@ -150,6 +149,7 @@ class _GeneralTabState extends State<_GeneralTab> {
             const _DownloadEverythingCard(),
             const SizedBox(height: 16),
             const DuaCard(),
+            const BackupCard(),
             Glass(
               radius: 26,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

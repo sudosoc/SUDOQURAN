@@ -5,6 +5,14 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+class RadioStation {
+  final String id;
+  final String name;
+  final String desc;
+  final List<String> urls;
+  const RadioStation(this.id, this.name, this.desc, this.urls);
+}
+
 class RemoteTrack {
   final String title;
   final String url;
@@ -31,6 +39,8 @@ class Sources extends ChangeNotifier {
   Map<String, String> everyAyah = {}; // reciterId -> verified everyayah folder
   List<RemoteTrack> adhan = [];
   List<RemoteTrack> duaRukub = [];
+  List<RadioStation> radios = [];
+  List<RadioStation> radiosExtra = [];
   Map<String, String> labels = {};
   String? generated;
   bool refreshing = false;
@@ -120,6 +130,13 @@ class Sources extends ChangeNotifier {
     everyAyah = Map<String, String>.from(
         (j['everyayah'] as Map? ?? {}).map((k, v) => MapEntry('$k', '$v')));
     adhan = tracks(j['adhan']);
+    List<RadioStation> stations(dynamic l) => [
+          for (final r in (l as List? ?? const []))
+            RadioStation('${(r as Map)['id']}', '${r['name']}', '${r['desc'] ?? ''}',
+                [for (final u in (r['urls'] as List? ?? const [])) '$u'])
+        ];
+    radios = stations(j['radios']).where((r) => r.urls.isNotEmpty).toList();
+    radiosExtra = stations(j['radios_extra']);
     duaRukub = tracks(j['dua_rukub']);
     _reciters = rec;
     _ruqyah = ru;

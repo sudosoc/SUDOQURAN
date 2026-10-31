@@ -55,6 +55,24 @@ class _InterfaceTabState extends State<InterfaceTab> {
             ],
           ),
           SectionCard(
+            icon: Icons.wallpaper_rounded,
+            title: 'خلفية حية',
+            subtitle: 'خلفية متحركة للتطبيق كله',
+            children: [
+              ChoiceRow<String>(
+                options: const [
+                  ('static', 'ثابتة'),
+                  ('stars', 'سماء ونجوم وهلال'),
+                  ('lanterns', 'فوانيس طايرة'),
+                  ('aurora', 'شفق متحرك'),
+                  ('geometry', 'زخرفة بتلف'),
+                ],
+                value: st.wallpaper,
+                onChanged: (v) => st.setOpt('wallpaper', v),
+              ),
+            ],
+          ),
+          SectionCard(
             icon: Icons.blur_on_rounded,
             title: 'الزجاج والخلفية',
             subtitle: 'لو الشاشة تقيلة قلّل التغبيش',

@@ -68,9 +68,44 @@ class Settings extends ChangeNotifier {
   bool get adhanSound => _opt('adhanSound', true);
   String? get adhanUrl => extra['adhanUrl'] as String?;
   bool get resumeAfterAdhan => _opt('resumeAfterAdhan', true);
+  int get preAlert => _opt('preAlert', 10); // minutes before adhan, 0 = off
+  bool get bgAdhan => _opt('bgAdhan', true); // alerts even when the app is closed
+  int get hijriOffset => _opt('hijriOffset', 0);
+
+  // ---- home background
+  String get wallpaper => _opt('wallpaper', 'static');
 
   /// Signature of everything that needs a full UI rebuild.
-  String get uiSig => '$uiScale|$blur|$pattern|$animations|$playerSide';
+  String get uiSig => '$uiScale|$blur|$pattern|$animations|$playerSide|$wallpaper';
+
+  // ---- backup
+  Map<String, dynamic> exportMap() => {
+        'app': 'SUDOQURAN',
+        'v': 1,
+        'allowStreaming': allowStreaming,
+        'autoResume': autoResume,
+        'autoDownload': autoDownload,
+        'themeId': themeId,
+        'customColors': customColors,
+        'driveOnLaunch': driveOnLaunch,
+        'extra': extra,
+        'lastSession': lastSession,
+      };
+
+  Future<void> importMap(Map<String, dynamic> m) async {
+    if (m['app'] != 'SUDOQURAN') throw const FormatException('مش ملف نسخة احتياطية من SUDOQURAN');
+    await _p.setBool('allowStreaming', m['allowStreaming'] as bool? ?? true);
+    await _p.setBool('autoResume', m['autoResume'] as bool? ?? true);
+    await _p.setBool('autoDownload', m['autoDownload'] as bool? ?? false);
+    await _p.setString('themeId', '${m['themeId'] ?? 'emerald'}');
+    final cc = (m['customColors'] as List?)?.map((e) => '$e').toList();
+    if (cc != null && cc.length == 4) await _p.setStringList('customColors', cc);
+    await _p.setBool('driveOnLaunch', m['driveOnLaunch'] as bool? ?? false);
+    await _p.setString('extra', jsonEncode(m['extra'] ?? {}));
+    if (m['lastSession'] != null) await _p.setString('lastSession', jsonEncode(m['lastSession']));
+    await load();
+    notifyListeners();
+  }
 
   /// Last thing that was playing, used for "continue" and auto-resume.
   Map<String, dynamic>? lastSession;

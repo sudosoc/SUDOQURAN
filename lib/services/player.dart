@@ -13,7 +13,7 @@ import 'settings.dart';
 import 'sources.dart';
 import 'widget_bridge.dart';
 
-enum PlayKind { none, quran, ruqyahAyat, ruqyahTracks, azkar, special }
+enum PlayKind { none, quran, ruqyahAyat, ruqyahTracks, azkar, radio, special }
 
 class Player extends ChangeNotifier {
   Player._();
@@ -26,6 +26,8 @@ class Player extends ChangeNotifier {
   String? sheikhId;
   String? azkarOwner;
   String? azkarWhen;
+  String? radioId;
+  bool radioError = false;
   List<int> _surahOrder = [];
 
   String title = '';
@@ -126,7 +128,7 @@ class Player extends ChangeNotifier {
   }
 
   /// Called by the prayer service at adhan time.
-  Future<void> adhanInterrupt(String prayerName) async {
+  Future<void> adhanInterrupt(String prayerName, {bool silent = false}) async {
     if (kind == PlayKind.special) return;
     final wasPlaying = audio.playing;
     _save();
@@ -138,7 +140,7 @@ class Player extends ChangeNotifier {
       }
     }
 
-    if (!st.adhanSound) {
+    if (!st.adhanSound || silent) {
       if (wasPlaying) await audio.pause();
       if (wasPlaying && st.resumeAfterAdhan) {
         Future.delayed(const Duration(minutes: 4), () {
@@ -165,6 +167,19 @@ class Player extends ChangeNotifier {
     try {
       await _playInterrupt([src], 'أذان $prayerName', 'حيّ على الصلاة', then: after);
     } catch (_) {}
+  }
+
+  /// Plays an adhan once (from settings), then puts the old session back paused.
+  Future<void> previewAdhan(String url) async {
+    final f = Library.instance.adhanFile(url);
+    final src = f != null
+        ? AudioSource.file(f.path, tag: const MediaItem(id: 'adhan_preview', title: 'تجربة الأذان'))
+        : AudioSource.uri(Uri.parse(url), tag: const MediaItem(id: 'adhan_preview', title: 'تجربة الأذان'));
+    _save();
+    final snapshot = Settings.instance.lastSession;
+    await _playInterrupt([src], 'تجربة الأذان', 'حيّ على الصلاة', then: () async {
+      if (snapshot != null) await _restore(snapshot, autoplay: false);
+    });
   }
 
   Future<void> stopInterrupt() async {
@@ -235,6 +250,7 @@ class Player extends ChangeNotifier {
 
     kind = PlayKind.quran;
     azkarOwner = null;
+    radioId = null;
     reciterId = r.id;
     sheikhId = null;
     artLetters = r.initials;
@@ -310,6 +326,33 @@ class Player extends ChangeNotifier {
     return true;
   }
 
+  /// Live radio. Tries each mirror URL until one plays.
+  Future<bool> playRadio(RadioStation st, {bool autoplay = true}) async {
+    radioError = false;
+    for (final u in st.urls) {
+      try {
+        kind = PlayKind.radio;
+        radioId = st.id;
+        reciterId = null;
+        sheikhId = null;
+        azkarOwner = null;
+        artLetters = '';
+        await audio.setAudioSource(
+          AudioSource.uri(Uri.parse(u),
+              tag: MediaItem(id: 'radio_${st.id}', title: st.name, artist: 'بث مباشر', album: 'الإذاعات')),
+        );
+        if (autoplay) unawaited(audio.play());
+        notifyListeners();
+        return true;
+      } catch (_) {
+        continue;
+      }
+    }
+    radioError = true;
+    notifyListeners();
+    return false;
+  }
+
   /// Morning / evening azkar of [ownerId] (a reciter id or ruqyah sheikh id).
   Future<bool> playAzkar(String ownerId, String ownerName, String when,
       {int index = 0, Duration position = Duration.zero, bool autoplay = true}) async {
@@ -375,6 +418,7 @@ class Player extends ChangeNotifier {
   }
 
   Future<void> seekBy(int seconds) async {
+    if (kind == PlayKind.radio) return;
     final d = audio.duration;
     var p = audio.position + Duration(seconds: seconds);
     if (p < Duration.zero) p = Duration.zero;
@@ -404,6 +448,7 @@ class Player extends ChangeNotifier {
       'title': title,
       'subtitle': subtitle,
       'azOwner': azkarOwner,
+      'radio': radioId,
       'azWhen': azkarWhen,
     });
   }
@@ -427,6 +472,15 @@ class Player extends ChangeNotifier {
         if (sh == null) return false;
         return playRuqyahAyat(sh,
             index: (s['index'] as int?) ?? 0, position: pos, autoplay: autoplay);
+      case 'radio':
+        final id = s['radio'] as String?;
+        final all = [...Sources.instance.radios, ...Sources.instance.radiosExtra];
+        RadioStation? st;
+        for (final r in all) {
+          if (r.id == id) st = r;
+        }
+        if (st == null) return false;
+        return playRadio(st, autoplay: autoplay);
       case 'azkar':
         final o = s['azOwner'] as String?;
         final w = s['azWhen'] as String?;

@@ -29,6 +29,11 @@ Future<void> main() async {
 
   await Settings.instance.load();
   AppColors.apply(themeById(Settings.instance.themeId, Settings.instance.customColors));
+  AppStyle
+    ..blur = Settings.instance.blur
+    ..pattern = Settings.instance.pattern
+    ..animations = Settings.instance.animations
+    ..wallpaper = Settings.instance.wallpaper;
   await Library.instance.init();
   await Sources.instance.load();
   // Don't block first frame on the notification permission dialog.
@@ -62,6 +67,7 @@ class SudoQuranApp extends StatelessWidget {
           AppStyle.blur = st.blur;
           AppStyle.pattern = st.pattern;
           AppStyle.animations = st.animations;
+          AppStyle.wallpaper = st.wallpaper;
         }
         return MaterialApp(
           // A new key per theme rebuilds every widget with the new palette.

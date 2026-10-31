@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
+import 'library.dart';
 import 'player.dart';
 import 'settings.dart';
 
@@ -133,12 +135,74 @@ class Prayer extends ChangeNotifier {
 
   List<DateTime> today = [];
 
+  static const _alarms = MethodChannel('sudoquran/alarms');
+  String _schedSig = '';
+
   void start() {
     _recalc();
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 15), (_) => _tick());
-    Settings.instance.addListener(_recalc);
+    Settings.instance.addListener(() {
+      _recalc();
+      scheduleNative();
+    });
+    Library.instance.addListener(scheduleNative);
+    scheduleNative();
   }
+
+  /// Hands the next 7 days of adhan (and pre-alert) times to Android's
+  /// AlarmManager, so they fire even when the app is closed.
+  Future<void> scheduleNative() async {
+    final st = Settings.instance;
+    final c = cityById(st.prayerCity);
+    final adhanPath = Library.instance.adhanFile()?.path ?? '';
+    final on = st.prayerEnabled && st.bgAdhan;
+    final sig = '$on|${c.id}|$adhanPath|${st.preAlert}|${st.adhanSound}|${DateTime.now().day}';
+    if (sig == _schedSig) return;
+    _schedSig = sig;
+    try {
+      if (!on) {
+        await _alarms.invokeMethod('cancel');
+        return;
+      }
+      final now = DateTime.now();
+      final items = <Map<String, Object>>[];
+      for (var d = 0; d < 7; d++) {
+        final day = DateTime(now.year, now.month, now.day).add(Duration(days: d));
+        final t = PrayerTimes.forDay(day, c.lat, c.lng);
+        for (var i = 0; i < t.length; i++) {
+          if (i == 1) continue;
+          if (t[i].isAfter(now)) {
+            items.add({
+              'at': t[i].millisecondsSinceEpoch,
+              'title': 'أذان ${prayerNames[i]}',
+              'body': 'حان الآن موعد صلاة ${prayerNames[i]} — ${c.name}',
+              'sound': st.adhanSound ? adhanPath : '',
+            });
+          }
+          final pre = t[i].subtract(Duration(minutes: st.preAlert));
+          if (st.preAlert > 0 && pre.isAfter(now)) {
+            items.add({
+              'at': pre.millisecondsSinceEpoch,
+              'title': '${prayerNames[i]} بعد ${st.preAlert} دقايق',
+              'body': 'استعد لصلاة ${prayerNames[i]}',
+              'sound': '',
+            });
+          }
+        }
+      }
+      await _alarms.invokeMethod('schedule', {'items': items});
+    } catch (_) {
+      _schedSig = '';
+    }
+  }
+
+  /// True when Android will play the adhan itself (app closed or not).
+  bool get nativeHandlesSound =>
+      Settings.instance.prayerEnabled &&
+      Settings.instance.bgAdhan &&
+      Settings.instance.adhanSound &&
+      Library.instance.adhanFile() != null;
 
   void _recalc() {
     final c = cityById(Settings.instance.prayerCity);
@@ -164,6 +228,20 @@ class Prayer extends ChangeNotifier {
     if (today.isEmpty || today.first.day != now.day) _recalc();
     notifyListeners();
     if (!Settings.instance.prayerEnabled) return;
+    final pre = Settings.instance.preAlert;
+    for (var i = 0; i < today.length; i++) {
+      if (i == 1 || pre <= 0) continue;
+      final t = today[i].subtract(Duration(minutes: pre));
+      final key = 'pre-${t.year}-${t.month}-${t.day}-$i';
+      final diff = now.difference(t).inSeconds;
+      if (diff >= 0 && diff < 90 && !_fired.contains(key)) {
+        _fired.add(key);
+        banner.value = '${prayerNames[i]} بعد $pre دقايق';
+        Future.delayed(const Duration(seconds: 40), () {
+          if (banner.value?.startsWith(prayerNames[i]) ?? false) banner.value = null;
+        });
+      }
+    }
     for (var i = 0; i < today.length; i++) {
       if (i == 1) continue;
       final t = today[i];
@@ -178,7 +256,7 @@ class Prayer extends ChangeNotifier {
 
   void _fire(String name) {
     banner.value = 'حان الآن موعد أذان $name';
-    Player.instance.adhanInterrupt(name);
+    Player.instance.adhanInterrupt(name, silent: nativeHandlesSound);
     Future.delayed(const Duration(minutes: 3), () {
       if (banner.value?.contains(name) ?? false) banner.value = null;
     });
@@ -186,6 +264,41 @@ class Prayer extends ChangeNotifier {
 
   /// Manual test from settings.
   void test() => _fire(next.$1);
+}
+
+const hijriMonths = [
+  'محرم', 'صفر', 'ربيع الأول', 'ربيع الآخر', 'جمادى الأولى', 'جمادى الآخرة',
+  'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة',
+];
+
+/// Tabular (Kuwaiti) Hijri date; [offset] days lets the user align with the official sighting.
+(int, int, int) hijri(DateTime g, [int offset = 0]) {
+  final d = g.add(Duration(days: offset));
+  var y = d.year, m = d.month;
+  if (m < 3) {
+    y -= 1;
+    m += 12;
+  }
+  final a = (y / 100).floor();
+  final b = 2 - a + (a / 4).floor();
+  final jd = (365.25 * (y + 4716)).floor() + (30.6001 * (m + 1)).floor() + d.day + b - 1524;
+  const iyear = 10631.0 / 30.0;
+  const shift1 = 8.01 / 60.0;
+  var z = (jd - 1948084).toDouble();
+  final cyc = (z / 10631.0).floor();
+  z = z - 10631 * cyc;
+  final j = ((z - shift1) / iyear).floor();
+  final iy = 30 * cyc + j;
+  z = z - (j * iyear + shift1).floor();
+  var im = ((z + 28.5001) / 29.5).floor();
+  if (im == 13) im = 12;
+  final id = (z - (29.5001 * im - 29).floor()).round();
+  return (id, im, iy);
+}
+
+String hijriText(DateTime g, [int offset = 0]) {
+  final (d, m, y) = hijri(g, offset);
+  return '$d ${hijriMonths[(m - 1).clamp(0, 11)]} $y هـ';
 }
 
 String fmtClock(DateTime t, {bool h24 = false, bool seconds = false}) {
