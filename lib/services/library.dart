@@ -203,11 +203,21 @@ class Library extends ChangeNotifier {
     return total;
   }
 
+  /// Short, filesystem-safe, stable name derived from the URL.
+  /// (The old version ran Uri.decodeComponent on an already-decoded Arabic
+  /// name, which throws — that was the white boxes in Ruqyah/Azkar.)
   String trackFileName(RemoteTrack t) {
-    var name = Uri.decodeComponent(Uri.parse(t.url).pathSegments.last);
-    name = name.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
-    if (!audioExts.contains(_ext(name))) name = '$name.mp3';
-    return name;
+    var h = 0xcbf29ce484222325;
+    for (final c in t.url.codeUnits) {
+      h ^= c;
+      h = (h * 0x100000001b3) & 0xFFFFFFFFFFFFFFF;
+    }
+    var ext = '.mp3';
+    final path = Uri.tryParse(t.url)?.path.toLowerCase() ?? '';
+    for (final e in audioExts) {
+      if (path.endsWith(e)) ext = e;
+    }
+    return 't_${h.toRadixString(16)}$ext';
   }
 
   File? localTrack(RuqyahSheikh s, RemoteTrack t) {

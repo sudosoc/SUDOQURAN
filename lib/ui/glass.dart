@@ -18,29 +18,41 @@ class AppThemeData {
       required this.teal});
 }
 
-const appThemes = <AppThemeData>[
-  AppThemeData('emerald', 'زمرد وذهب',
-      bg0: Color(0xFF040F15), bg1: Color(0xFF082630), bg2: Color(0xFF0F1B33),
-      gold: Color(0xFFE6C27A), emerald: Color(0xFF3DDC97), teal: Color(0xFF2BB3C0)),
-  AppThemeData('midnight', 'ليل أزرق',
-      bg0: Color(0xFF050814), bg1: Color(0xFF0D1838), bg2: Color(0xFF1A1036),
-      gold: Color(0xFFBFD4FF), emerald: Color(0xFF5B8CFF), teal: Color(0xFF8B5CF6)),
-  AppThemeData('desert', 'صحراء',
-      bg0: Color(0xFF140C06), bg1: Color(0xFF2E1D0E), bg2: Color(0xFF241510),
-      gold: Color(0xFFF2C38B), emerald: Color(0xFFE8945A), teal: Color(0xFFC96F4A)),
-  AppThemeData('rose', 'وردي هادي',
-      bg0: Color(0xFF12070C), bg1: Color(0xFF2A0F1E), bg2: Color(0xFF1C0D24),
-      gold: Color(0xFFF5C6D6), emerald: Color(0xFFEC6F9B), teal: Color(0xFFB66DFF)),
-  AppThemeData('forest', 'غابة',
-      bg0: Color(0xFF040D07), bg1: Color(0xFF0C2414), bg2: Color(0xFF13261A),
-      gold: Color(0xFFD9E8A0), emerald: Color(0xFF7BD389), teal: Color(0xFF3FA36B)),
-  AppThemeData('amoled', 'أسود (AMOLED)',
-      bg0: Color(0xFF000000), bg1: Color(0xFF0A0A0A), bg2: Color(0xFF050505),
-      gold: Color(0xFFE6C27A), emerald: Color(0xFF3DDC97), teal: Color(0xFF555555)),
+AppThemeData _t(String id, String name, int bg0, int bg1, int bg2, int gold, int emerald, int teal) =>
+    AppThemeData(id, name,
+        bg0: Color(bg0), bg1: Color(bg1), bg2: Color(bg2),
+        gold: Color(gold), emerald: Color(emerald), teal: Color(teal));
+
+final appThemes = <AppThemeData>[
+  _t('emerald', 'زمرد وذهب', 0xFF040F15, 0xFF082630, 0xFF0F1B33, 0xFFE6C27A, 0xFF3DDC97, 0xFF2BB3C0),
+  _t('crimson', 'أسود ملكي أحمر', 0xFF000000, 0xFF1A0507, 0xFF121212, 0xFFE5484D, 0xFF9B111E, 0xFF3A3A3A),
+  _t('amoled', 'أسود AMOLED', 0xFF000000, 0xFF0A0A0A, 0xFF050505, 0xFFE6C27A, 0xFF3DDC97, 0xFF555555),
+  _t('graphite', 'جرافيت', 0xFF0B0B0D, 0xFF1C1D21, 0xFF141518, 0xFFD9DCE1, 0xFF8A8F98, 0xFF4B5058),
+  _t('midnight', 'ليل أزرق', 0xFF050814, 0xFF0D1838, 0xFF1A1036, 0xFFBFD4FF, 0xFF5B8CFF, 0xFF8B5CF6),
+  _t('royal', 'بنفسجي ملكي', 0xFF0A0614, 0xFF1D0F36, 0xFF120A24, 0xFFE9C46A, 0xFF9D4EDD, 0xFF5A189A),
+  _t('ocean', 'محيط', 0xFF020C14, 0xFF06283D, 0xFF0A1A2F, 0xFF9AE6F5, 0xFF1FB6D4, 0xFF256D85),
+  _t('desert', 'صحراء', 0xFF140C06, 0xFF2E1D0E, 0xFF241510, 0xFFF2C38B, 0xFFE8945A, 0xFFC96F4A),
+  _t('copper', 'نحاسي', 0xFF0E0806, 0xFF2A140C, 0xFF1A0E0A, 0xFFF0A868, 0xFFB86B3C, 0xFF6E3B22),
+  _t('forest', 'غابة', 0xFF040D07, 0xFF0C2414, 0xFF13261A, 0xFFD9E8A0, 0xFF7BD389, 0xFF3FA36B),
+  _t('olive', 'زيتوني', 0xFF0A0B05, 0xFF1F230F, 0xFF16180C, 0xFFE3D58C, 0xFFA3B14B, 0xFF5E6B2A),
+  _t('rose', 'وردي هادي', 0xFF12070C, 0xFF2A0F1E, 0xFF1C0D24, 0xFFF5C6D6, 0xFFEC6F9B, 0xFFB66DFF),
+  _t('sunset', 'غروب', 0xFF120509, 0xFF2D0B1A, 0xFF1F0A0A, 0xFFFFC371, 0xFFFF5F6D, 0xFFB23A48),
+  _t('ice', 'ثلجي داكن', 0xFF060A0F, 0xFF121C26, 0xFF0C131B, 0xFFE8F1F8, 0xFF7FB3D5, 0xFF41658A),
 ];
 
-AppThemeData themeById(String? id) =>
-    appThemes.firstWhere((t) => t.id == id, orElse: () => appThemes.first);
+/// Built from the user's own colours (Settings → الثيمات → ثيم مخصص).
+AppThemeData customTheme(List<int> c) => AppThemeData('custom', 'ثيم مخصص',
+    bg0: Color(c[0]),
+    bg1: Color(c[1]),
+    bg2: Color.lerp(Color(c[0]), Color(c[1]), 0.5)!,
+    gold: Color(c[2]),
+    emerald: Color(c[3]),
+    teal: Color.lerp(Color(c[3]), Color(c[1]), 0.4)!);
+
+AppThemeData themeById(String? id, [List<int>? custom]) {
+  if (id == 'custom' && custom != null && custom.length >= 4) return customTheme(custom);
+  return appThemes.firstWhere((t) => t.id == id, orElse: () => appThemes.first);
+}
 
 /// Live palette — values change when the user picks another theme.
 class AppColors {
@@ -300,10 +312,10 @@ class _BgPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// Gold-ringed disc: the reciter's photo if the user set one, otherwise
-/// calligraphic initials on a colour unique to that reciter.
+/// Gold-ringed disc: the photo the user chose for that sheikh, otherwise a
+/// painted mushaf (open Quran) on the theme colours.
 class ReciterAvatar extends StatelessWidget {
-  final String letters;
+  final String letters; // kept for API compatibility
   final String? photoId;
   final double size;
   final bool glow;
@@ -312,43 +324,96 @@ class ReciterAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final photo = photoId == null ? null : Library.instance.photoFor(photoId!);
-    final hue = ((photoId ?? letters).codeUnits.fold<int>(7, (a, c) => (a * 31 + c) & 0xFFFF) % 360).toDouble();
-    final c1 = HSLColor.fromAHSL(1, hue, 0.45, 0.30).toColor();
-    final c2 = HSLColor.fromAHSL(1, (hue + 40) % 360, 0.55, 0.14).toColor();
     return Container(
       width: size,
       height: size,
-      alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [c1, c2],
+          colors: [Color.lerp(AppColors.bg1, AppColors.emerald, 0.35)!, AppColors.bg0],
         ),
-        image: photo == null
-            ? null
-            : DecorationImage(image: FileImage(photo), fit: BoxFit.cover),
-        border: Border.all(color: AppColors.gold.withOpacity(0.75), width: size / 28),
+        image: photo == null ? null : DecorationImage(image: FileImage(photo), fit: BoxFit.cover),
+        border: Border.all(color: AppColors.gold.withOpacity(0.8), width: size / 28),
         boxShadow: glow
-            ? [BoxShadow(color: AppColors.emerald.withOpacity(0.4), blurRadius: size / 3)]
+            ? [BoxShadow(color: AppColors.emerald.withOpacity(0.45), blurRadius: size / 3)]
             : [BoxShadow(color: Colors.black.withOpacity(0.35), blurRadius: size / 8, offset: Offset(0, size / 20))],
       ),
       child: photo != null
           ? null
-          : Text(
-              letters,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.gold,
-                fontSize: size * (letters.length > 3 ? 0.24 : 0.34),
-                fontWeight: FontWeight.w800,
-                height: 1.1,
-                shadows: const [Shadow(blurRadius: 8, color: Colors.black54)],
-              ),
+          : Padding(
+              padding: EdgeInsets.all(size * 0.17),
+              child: CustomPaint(painter: MushafPainter(AppColors.gold, AppColors.bg0)),
             ),
     );
   }
+}
+
+/// An open mushaf on a stand with an eight-pointed star above it.
+class MushafPainter extends CustomPainter {
+  final Color gold;
+  final Color ink;
+  const MushafPainter(this.gold, this.ink);
+
+  @override
+  void paint(Canvas canvas, Size s) {
+    final w = s.width, h = s.height;
+    final fill = Paint()..color = gold;
+    final page = Paint()..color = gold.withOpacity(0.92);
+    final line = Paint()
+      ..color = ink.withOpacity(0.55)
+      ..strokeWidth = w * 0.025
+      ..strokeCap = StrokeCap.round;
+
+    // star
+    final c = Offset(w / 2, h * 0.16);
+    final r = w * 0.13;
+    for (final rot in [0.0, math.pi / 4]) {
+      final p = Path();
+      for (var i = 0; i < 4; i++) {
+        final a = rot + i * math.pi / 2 + math.pi / 4;
+        final pt = Offset(c.dx + r * math.cos(a), c.dy + r * math.sin(a));
+        i == 0 ? p.moveTo(pt.dx, pt.dy) : p.lineTo(pt.dx, pt.dy);
+      }
+      canvas.drawPath(p..close(), fill);
+    }
+    canvas.drawCircle(c, r * 0.38, Paint()..color = ink.withOpacity(0.6));
+
+    // two pages
+    final top = h * 0.36, bottom = h * 0.80, mid = w / 2;
+    Path pageL = Path()
+      ..moveTo(mid, top + h * 0.06)
+      ..quadraticBezierTo(w * 0.28, top - h * 0.03, w * 0.04, top + h * 0.02)
+      ..lineTo(w * 0.04, bottom - h * 0.02)
+      ..quadraticBezierTo(w * 0.28, bottom - h * 0.07, mid, bottom)
+      ..close();
+    Path pageR = Path()
+      ..moveTo(mid, top + h * 0.06)
+      ..quadraticBezierTo(w * 0.72, top - h * 0.03, w * 0.96, top + h * 0.02)
+      ..lineTo(w * 0.96, bottom - h * 0.02)
+      ..quadraticBezierTo(w * 0.72, bottom - h * 0.07, mid, bottom)
+      ..close();
+    canvas.drawPath(pageL, page);
+    canvas.drawPath(pageR, page);
+    // text lines
+    for (var i = 0; i < 4; i++) {
+      final y = top + h * 0.11 + i * h * 0.085;
+      canvas.drawLine(Offset(w * 0.12, y), Offset(mid - w * 0.07, y + h * 0.012), line);
+      canvas.drawLine(Offset(mid + w * 0.07, y + h * 0.012), Offset(w * 0.88, y), line);
+    }
+    // spine + stand (rahl)
+    canvas.drawLine(Offset(mid, top + h * 0.06), Offset(mid, bottom), line..strokeWidth = w * 0.03);
+    final stand = Paint()
+      ..color = gold
+      ..strokeWidth = w * 0.06
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(Offset(w * 0.18, h * 0.97), Offset(w * 0.82, bottom + h * 0.05), stand);
+    canvas.drawLine(Offset(w * 0.82, h * 0.97), Offset(w * 0.18, bottom + h * 0.05), stand);
+  }
+
+  @override
+  bool shouldRepaint(covariant MushafPainter old) => old.gold != gold || old.ink != ink;
 }
 
 String fmtDuration(Duration d) {

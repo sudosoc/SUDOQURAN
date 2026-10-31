@@ -18,6 +18,9 @@ class Settings extends ChangeNotifier {
   /// Selected colour theme.
   String themeId = 'emerald';
 
+  /// Custom theme colours: [background, surface, accent, secondary] (ARGB ints).
+  List<int> customColors = [0xFF000000, 0xFF1A0507, 0xFFE5484D, 0xFF9B111E];
+
   /// Open straight into driving mode when the app starts.
   bool driveOnLaunch = false;
 
@@ -32,6 +35,8 @@ class Settings extends ChangeNotifier {
     autoDownload = _p.getBool('autoDownload') ?? false;
     themeId = _p.getString('themeId') ?? 'emerald';
     driveOnLaunch = _p.getBool('driveOnLaunch') ?? false;
+    final cc = _p.getStringList('customColors');
+    if (cc != null && cc.length == 4) customColors = cc.map(int.parse).toList();
     final ls = _p.getString('lastSession');
     if (ls != null) {
       try {
@@ -62,6 +67,12 @@ class Settings extends ChangeNotifier {
     themeId = id;
     await _p.setString('themeId', id);
     notifyListeners();
+  }
+
+  Future<void> setCustomColors(List<int> c) async {
+    customColors = List.of(c);
+    await _p.setStringList('customColors', c.map((e) => '$e').toList());
+    if (themeId == 'custom') notifyListeners();
   }
 
   Future<void> setDriveOnLaunch(bool v) async {

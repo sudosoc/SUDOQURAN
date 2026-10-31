@@ -27,7 +27,7 @@ Future<void> main() async {
   ]);
 
   await Settings.instance.load();
-  AppColors.apply(themeById(Settings.instance.themeId));
+  AppColors.apply(themeById(Settings.instance.themeId, Settings.instance.customColors));
   await Library.instance.init();
   await Sources.instance.load();
   // Don't block first frame on the notification permission dialog.
@@ -42,6 +42,8 @@ Future<void> main() async {
   runApp(const SudoQuranApp());
 }
 
+String? _themeSig;
+
 class SudoQuranApp extends StatelessWidget {
   const SudoQuranApp({super.key});
 
@@ -50,12 +52,27 @@ class SudoQuranApp extends StatelessWidget {
     return ListenableBuilder(
       listenable: Settings.instance,
       builder: (context, _) {
-        if (AppColors.themeId != Settings.instance.themeId) {
-          AppColors.apply(themeById(Settings.instance.themeId));
+        final st = Settings.instance;
+        final sig = st.themeId == 'custom' ? 'custom-${st.customColors.join('-')}' : st.themeId;
+        if (_themeSig != sig) {
+          _themeSig = sig;
+          AppColors.apply(themeById(st.themeId, st.customColors));
         }
         return MaterialApp(
           // A new key per theme rebuilds every widget with the new palette.
-          key: ValueKey(AppColors.themeId),
+          key: ValueKey(sig),
+          builder: (context, child) {
+            // Show real errors instead of Flutter's blank grey box.
+            ErrorWidget.builder = (d) => Container(
+                  padding: const EdgeInsets.all(12),
+                  color: const Color(0x33FF4444),
+                  child: Text('خطأ: ${d.exceptionAsString()}',
+                      maxLines: 6,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white, fontSize: 13)),
+                );
+            return child!;
+          },
           title: 'القرآن الكريم',
           debugShowCheckedModeBanner: false,
           theme: buildTheme(),
