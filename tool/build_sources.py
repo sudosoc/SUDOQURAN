@@ -466,7 +466,7 @@ def everyayah_ok():
     return out
 
 
-def archive_tracks(queries, must, min_size, max_size, limit, title_must=None):
+def archive_tracks(queries, must, min_size, max_size, limit, title_must=None, exclude=None):
     ids = {}
     for q in queries:
         for d in archive_search(q, rows=25):
@@ -480,9 +480,9 @@ def archive_tracks(queries, must, min_size, max_size, limit, title_must=None):
                 continue
             fname = urllib.parse.unquote(name.rsplit("/", 1)[-1])
             n, low = norm(fname), fname.lower()
-            nt, lt = norm(title), str(title).lower()
-            if not any(norm(m) in n or m in low for m in must) and not (
-                    len(files) <= 30 and any(norm(m) in nt or m in lt for m in must)):
+            if not any(norm(m) in n or m in low for m in must):
+                continue
+            if exclude and any(norm(x) in n or x in low for x in exclude):
                 continue
             if title_must and not any(norm(m) in n or m in low for m in title_must):
                 continue
@@ -554,9 +554,10 @@ def radios():
                 t, low = norm(text), text.lower()
                 if not any(norm(g) in t or g in low for g in guard):
                     continue
-                if gid != "madinah" and not any(norm(k) in t or k in low for k in ["قران", "قرآن", "quran", "koran", "coran", "حرم", "haram", "nabawi", "نبوي"]):
+                if not any(norm(k) in t or k in low for k in
+                           ["قران", "قرآن", "quran", "koran", "coran", "حرم", "haram", "nabawi", "نبوي", "masjid", "مسجد", "islam"]):
                     continue
-                if gid == "madinah" and any(x in low for x in ["medina county", "ohio", "spain", "fm medina"]):
+                if gid == "madinah" and not re.search(r"(?<![a-z])(madinah|medina|madina|madinat)(?![a-z])|المدينه|المدينة|نبوي|nabawi", low + " " + text):
                     continue
                 u = st.get("url_resolved") or st.get("url")
                 if u:
@@ -566,6 +567,12 @@ def radios():
                 data = get_json("https://de1.api.radio-browser.info/json/stations/bytag/" + urllib.parse.quote(tag)
                                 + "?hidebroken=true&order=votes&reverse=true&limit=25") or []
                 for st in data:
+                    text = f"{st.get('name', '')} {st.get('tags', '')}"
+                    low = text.lower()
+                    if not re.search(r"(?<![a-z])(madinah|medina|madina|nabawi|haramain)(?![a-z])|المدينه|المدينة|نبوي", low + " " + text):
+                        continue
+                    if not any(k in low or k in text for k in ["quran", "koran", "haram", "nabawi", "masjid", "islam", "قرآن", "قران", "مسجد"]):
+                        continue
                     u = st.get("url_resolved") or st.get("url")
                     if u:
                         cands.append((int(st.get("votes") or 0), u, st.get("name", "")))
@@ -581,6 +588,13 @@ def radios():
 
     # every reciter radio from mp3quran (24/7 recitation by one reciter)
     data = get_json("https://www.mp3quran.net/api/v3/radios?language=ar") or {}
+    for grp in out:
+        if grp["id"] == "madinah" and not grp["urls"]:
+            for r in (data.get("radios") or []):
+                n = r.get("name") or ""
+                if ("المدينة" in n or "النبوي" in n) and r.get("url") and check_stream(r["url"]):
+                    grp["urls"].append(r["url"])
+                    grp["found"].append(n)
     extra = []
     for r in (data.get("radios") or [])[:400]:
         u, n = r.get("url"), r.get("name")
@@ -680,7 +694,9 @@ def main():
          'اذان المسجد النبوي', 'adhan madinah', 'اذان المسجد الاقصى', 'adhan al aqsa',
          'اذان عبد الباسط', 'اذان نصر الدين طوبار', 'اذان محمد رفعت', 'اذان الحصري', 'adhan mishary',
          'اذان علي ملا', 'adhan ali mulla', 'اذان ناصر القطامي', 'beautiful adhan'],
-        must=["اذان", "الاذان", "adhan", "azan", "adzan", "athan", "adan", "ezan"], min_size=250_000, max_size=9_000_000, limit=24)
+        must=["اذان", "الاذان", "adhan", "azan", "adzan", "athan", "ezan"], min_size=250_000, max_size=9_000_000, limit=24,
+        exclude=["doa", "دعاء", "setelah", "ketika", "dua", "qolqolah", "surah", "سوره", "iqama", "اقامه", "lesson", "درس",
+                 "ringtone", "nasheed", "نشيد", "song", "اغنيه"])
     report.append(f"## adhan — {len(result['adhan'])} tracks")
     for t in result["adhan"]:
         report.append(f"- {t['title']} ({t['size'] // 1000} KB)")
