@@ -443,6 +443,70 @@ def azkar_all():
     return out
 
 
+# ------------------------------------------------- everyayah / adhan / dua
+EVERYAYAH = {
+    "maher": ["MaherAlMuaiqly128kbps", "Maher_AlMuaiqly_64kbps"],
+    "minshawi": ["Minshawy_Murattal_128kbps"],
+    "afasy": ["Alafasy_128kbps", "Alafasy_64kbps"],
+    "basit": ["Abdul_Basit_Murattal_192kbps", "Abdul_Basit_Murattal_64kbps"],
+    "ghamdi": ["Ghamadi_40kbps"],
+    "dosari": ["Yasser_Ad-Dussary_128kbps"],
+    "tablawi": ["Mohammad_al_Tablaway_128kbps", "Mohammad_al_Tablaway_64kbps"],
+    "banna": ["mahmoud_ali_al_banna_32kbps"],
+}
+
+
+def everyayah_ok():
+    out = {}
+    for rid, folders in EVERYAYAH.items():
+        for f in folders:
+            if check_audio(f"https://everyayah.com/data/{f}/043013.mp3"):
+                out[rid] = f
+                break
+    return out
+
+
+def archive_tracks(queries, must, min_size, max_size, limit, title_must=None):
+    ids = {}
+    for q in queries:
+        for d in archive_search(q, rows=25):
+            ids.setdefault(d["identifier"], d)
+
+    def inspect(identifier):
+        files, title = archive_files(identifier)
+        found = []
+        for name, size in files:
+            if size and (size < min_size or size > max_size):
+                continue
+            fname = urllib.parse.unquote(name.rsplit("/", 1)[-1])
+            n, low = norm(fname), fname.lower()
+            if not any(norm(m) in n or m in low for m in must):
+                continue
+            if title_must and not any(norm(m) in n or m in low for m in title_must):
+                continue
+            found.append({
+                "title": fname.rsplit(".", 1)[0].replace("_", " ").strip(),
+                "url": f"https://archive.org/download/{urllib.parse.quote(identifier)}/{urllib.parse.quote(name)}",
+                "size": size,
+            })
+        return found
+
+    tracks = []
+    with cf.ThreadPoolExecutor(8) as ex:
+        for res in ex.map(inspect, list(ids)[:60]):
+            tracks.extend(res)
+    seen, keep = set(), []
+    for t in sorted(tracks, key=lambda t: t["size"]):
+        k = (norm(t["title"])[:20], t["size"] // 200_000)
+        if k in seen:
+            continue
+        seen.add(k)
+        keep.append(t)
+    with cf.ThreadPoolExecutor(8) as ex:
+        good = [t for t, g in zip(keep, ex.map(lambda t: check_audio(t["url"]), keep)) if g]
+    return good[:limit]
+
+
 # ------------------------------------------------------------------ main
 def main():
     report = ["# Sources report", ""]
@@ -521,6 +585,24 @@ def main():
         if clean:
             result["azkar"][rid] = clean
             report.append(f"- {rid}: صباح {len(clean.get('morning', []))} · مساء {len(clean.get('evening', []))}")
+    report.append("")
+
+    ea = everyayah_ok()
+    result["everyayah"] = ea
+    report.append(f"## everyayah (دعاء الركوب) — {ea}")
+    result["adhan"] = archive_tracks(
+        ['"الأذان" مكة', 'اذان الحرم المكي', 'adhan makkah', 'azan mp3', '"أذان" بصوت'],
+        must=["اذان", "الاذان", "adhan", "azan", "adzan"], min_size=300_000, max_size=9_000_000, limit=8)
+    report.append(f"## adhan — {len(result['adhan'])} tracks")
+    for t in result["adhan"]:
+        report.append(f"- {t['title']} ({t['size'] // 1000} KB)")
+    result["dua_rukub"] = archive_tracks(
+        ['"دعاء الركوب"', '"دعاء السفر"', 'دعاء ركوب السيارة', 'dua travel safar'],
+        must=["الركوب", "ركوب", "السفر", "safar", "travel"], min_size=40_000, max_size=6_000_000, limit=6,
+        title_must=["دعاء", "dua", "doaa", "doa"])
+    report.append(f"## dua_rukub — {len(result['dua_rukub'])} tracks")
+    for t in result["dua_rukub"]:
+        report.append(f"- {t['title']} ({t['size'] // 1000} KB)")
     report.append("")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
