@@ -5,6 +5,7 @@ import '../services/settings.dart';
 import 'adhan_banner.dart';
 import 'drive_mode.dart';
 import 'glass.dart';
+import 'interrupt_bar.dart';
 import 'now_playing.dart';
 import 'prayer_tab.dart';
 import 'quran_page.dart';
@@ -86,6 +87,7 @@ class _HomeShellState extends State<HomeShell> {
             ),
           ),
           const AdhanBanner(),
+            const InterruptBar(),
         ],
       ),
     );

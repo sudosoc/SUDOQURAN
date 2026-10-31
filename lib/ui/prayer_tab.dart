@@ -9,6 +9,7 @@ import '../services/prayer.dart';
 import '../services/settings.dart';
 import '../services/sources.dart';
 import 'glass.dart';
+import 'interrupt_bar.dart';
 import 'settings_widgets.dart';
 
 /// Main "الصلاة" section (right rail): countdown, times, alerts, adhan voices.
@@ -143,6 +144,7 @@ class _PrayerSectionState extends State<PrayerSection> {
             ),
             const SizedBox(height: 16),
             // ------------------------------------------------------- alerts
+            const StopBubbleCard(),
             SectionCard(
               icon: Icons.notifications_active_rounded,
               title: 'تنبيهات الأذان',

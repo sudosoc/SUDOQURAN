@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../services/gps.dart';
 import '../services/settings.dart';
+import 'car_dash.dart';
 import 'drive_mode.dart';
 import 'glass.dart';
 import 'settings_widgets.dart';
@@ -95,8 +97,119 @@ class DriveTab extends StatelessWidget {
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          const SliverToBoxAdapter(child: CarDashCustomizer()),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
+    );
+  }
+}
+
+
+/// Every piece of the speedometer style can be mixed & matched here.
+class CarDashCustomizer extends StatelessWidget {
+  const CarDashCustomizer({super.key});
+
+  Widget _h(String t) => Padding(
+        padding: const EdgeInsets.only(top: 18, bottom: 10),
+        child: Text(t, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: AppColors.gold)),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    final st = Settings.instance;
+    final tiles = st.carTiles;
+    return SectionCard(
+      icon: Icons.speed_rounded,
+      title: 'تخصيص عداد السرعة',
+      subtitle: 'الثيم الوحيد اللي كل حتة فيه ليها أكتر من شكل — ركّب على مزاجك',
+      trailing: GlassButton(
+        icon: Icons.visibility_rounded,
+        label: 'جرّب',
+        size: 48,
+        onTap: () => DriveMode.open(context, style: 'car'),
+      ),
+      children: [
+        _h('شكل العداد'),
+        ChoiceRow<String>(options: carGauges, value: st.carGauge, onChanged: (v) => st.setOpt('carGauge', v)),
+        _h('العربية'),
+        ChoiceRow<String>(options: carModels, value: st.carModel, onChanged: (v) => st.setOpt('carModel', v)),
+        _h('لون العربية'),
+        Wrap(spacing: 12, runSpacing: 12, children: [
+          for (final (c, name) in carColors)
+            Tooltip(
+              message: name,
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () => st.setOpt('carColor', c),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  width: 54,
+                  height: 54,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(c),
+                    border: Border.all(color: st.carColor == c ? AppColors.gold : Colors.white24, width: st.carColor == c ? 4 : 1.5),
+                  ),
+                ),
+              ),
+            ),
+        ]),
+        _h('الخانات اللي تظهر (لحد 6)'),
+        Wrap(spacing: 10, runSpacing: 10, children: [
+          for (final (id, label, icon) in carTilesAll)
+            FilterChip(
+              avatar: Icon(icon, size: 20, color: tiles.contains(id) ? AppColors.bg0 : AppColors.gold),
+              label: Text(label, style: TextStyle(fontSize: 16, color: tiles.contains(id) ? AppColors.bg0 : AppColors.text)),
+              selected: tiles.contains(id),
+              showCheckmark: false,
+              selectedColor: AppColors.gold,
+              backgroundColor: Colors.white.withOpacity(0.06),
+              onSelected: (on) {
+                final l = [...tiles];
+                if (on) {
+                  if (l.length >= 6) l.removeAt(0);
+                  l.add(id);
+                } else {
+                  l.remove(id);
+                }
+                st.setOpt('carTiles', l);
+              },
+            ),
+        ]),
+        _h('الوحدة وأقصى رقم'),
+        ChoiceRow<bool>(options: const [(false, 'كم/س'), (true, 'ميل/س')], value: st.carMph, onChanged: (v) => st.setOpt('carMph', v)),
+        const SizedBox(height: 10),
+        ChoiceRow<int>(
+          options: const [(140, '140'), (180, '180'), (220, '220'), (260, '260')],
+          value: st.carMax,
+          onChanged: (v) => st.setOpt('carMax', v),
+        ),
+        SliderRow(
+          title: 'تنبيه تخطي السرعة',
+          value: st.carLimit.toDouble(),
+          min: 0,
+          max: 180,
+          divisions: 18,
+          label: (v) => v == 0 ? 'مقفول' : '${v.round()} كم/س',
+          onChanged: (v) => st.setOpt('carLimit', v.round()),
+        ),
+        ToggleRow(
+          title: 'الطريق المتحرك',
+          subtitle: 'خطوط الطريق والعجل بيلفوا على قد سرعتك الحقيقية',
+          value: st.carRoad,
+          onChanged: (v) => st.setOpt('carRoad', v),
+        ),
+        const SizedBox(height: 8),
+        Row(children: [
+          GlassButton(icon: Icons.restart_alt_rounded, label: 'صفّر المشوار', size: 48, onTap: Gps.instance.resetTrip),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text('ضغطة طويلة على خانة المسافة أو الوقت جوه العداد بتصفّرهم برضه',
+                style: TextStyle(fontSize: 15, color: AppColors.muted)),
+          ),
+        ]),
+      ],
     );
   }
 }

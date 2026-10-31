@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 
@@ -87,6 +88,28 @@ class MainActivity : AudioServiceActivity() {
                 }
             } catch (t: Throwable) {
                 result.error("dua", t.message, null)
+            }
+        }
+
+        EventChannel(messenger, "sudoquran/gps").setStreamHandler(GpsStream(applicationContext))
+
+        MethodChannel(messenger, "sudoquran/overlay").setMethodCallHandler { call, result ->
+            when (call.method) {
+                "canDraw" -> result.success(StopBubble.canDraw(applicationContext))
+                "request" -> {
+                    try {
+                        startActivity(
+                            Intent(
+                                android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                android.net.Uri.parse("package:$packageName")
+                            )
+                        )
+                        result.success(true)
+                    } catch (t: Throwable) {
+                        result.error("overlay", t.message, null)
+                    }
+                }
+                else -> result.notImplemented()
             }
         }
 

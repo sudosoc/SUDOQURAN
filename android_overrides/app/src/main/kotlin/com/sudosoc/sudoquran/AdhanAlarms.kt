@@ -112,14 +112,24 @@ class AdhanAlarmReceiver : BroadcastReceiver() {
             val sound = intent.getStringExtra("sound") ?: ""
             val nid = intent.getIntExtra("nid", 7000)
             val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val n = AdhanScheduler.builder(context, "adhan_alerts")
+            val willPlay = sound.isNotEmpty() && File(sound).exists()
+            val stopPi = PendingIntent.getService(
+                context, 2, Intent(context, AdhanService::class.java).setAction("STOP"),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            val b = AdhanScheduler.builder(context, "adhan_alerts")
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setContentIntent(AdhanScheduler.openAppIntent(context))
-                .build()
-            nm.notify(nid, n)
+            if (willPlay) {
+                // swiping the notification away / pressing "إيقاف" silences the adhan
+                b.setDeleteIntent(stopPi)
+                @Suppress("DEPRECATION")
+                b.addAction(android.R.drawable.ic_media_pause, "إيقاف الأذان", stopPi)
+            }
+            nm.notify(nid, b.build())
             if (sound.isNotEmpty() && File(sound).exists()) {
                 val svc = Intent(context, AdhanService::class.java).putExtra("path", sound).putExtra("title", title)
                 try {
@@ -148,8 +158,17 @@ class AdhanService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
+    private var focus: Any? = null
+    private val focusListener = android.media.AudioManager.OnAudioFocusChangeListener { change ->
+        // a phone call / navigation took the audio → stop right away
+        if (change == android.media.AudioManager.AUDIOFOCUS_LOSS ||
+            change == android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) stopAll()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == "STOP") {
+            if (Build.VERSION.SDK_INT >= 26) startForeground(9001, AdhanScheduler.builder(this, "adhan_play")
+                .setSmallIcon(android.R.drawable.ic_lock_idle_alarm).setContentTitle("الأذان").build())
             stopAll()
             return START_NOT_STICKY
         }
@@ -189,15 +208,34 @@ class AdhanService : Service() {
                 prepare()
                 start()
             }
+            requestFocus()
+            StopBubble.show(this, "إيقاف الأذان", Intent(this, AdhanService::class.java).setAction("STOP"))
         } catch (_: Throwable) {
             stopAll()
         }
         return START_NOT_STICKY
     }
 
+    private fun requestFocus() {
+        val am = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+        if (Build.VERSION.SDK_INT >= 26) {
+            val r = android.media.AudioFocusRequest.Builder(android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                .setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build())
+                .setOnAudioFocusChangeListener(focusListener)
+                .build()
+            focus = r
+            am.requestAudioFocus(r)
+        }
+    }
+
     private fun stopAll() {
+        StopBubble.hide(this)
         try { player?.release() } catch (_: Throwable) {}
         player = null
+        if (Build.VERSION.SDK_INT >= 26) {
+            val am = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            (focus as? android.media.AudioFocusRequest)?.let { am.abandonAudioFocusRequest(it) }
+        }
         stopFg()
         stopSelf()
     }

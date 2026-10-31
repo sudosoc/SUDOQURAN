@@ -93,6 +93,7 @@ class DuaService : Service() {
         when (intent?.action) {
             "PLAY_BOOT" -> handler.postDelayed({ play() }, 7000) // let the head unit's audio come up
             "PLAY" -> play()
+            "STOP" -> stopPlayback()
         }
         return START_STICKY
     }
@@ -113,6 +114,14 @@ class DuaService : Service() {
             .setContentText("هيشتغل تلقائي أول ما العربية تدور")
             .setContentIntent(AdhanScheduler.openAppIntent(this))
             .setOngoing(true)
+            .apply {
+                val stop = android.app.PendingIntent.getService(
+                    this@DuaService, 3, Intent(this@DuaService, DuaService::class.java).setAction("STOP"),
+                    android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+                )
+                @Suppress("DEPRECATION")
+                addAction(android.R.drawable.ic_media_pause, "إيقاف الدعاء", stop)
+            }
             .build()
         try {
             if (Build.VERSION.SDK_INT >= 29) startForeground(9101, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
@@ -131,6 +140,7 @@ class DuaService : Service() {
         if (files.isEmpty()) return
         prefs.edit().putLong("last", System.currentTimeMillis()).apply()
         requestFocus()
+        StopBubble.show(this, "إيقاف الدعاء", Intent(this, DuaService::class.java).setAction("STOP"))
         playAt(files, 0)
     }
 
@@ -138,6 +148,7 @@ class DuaService : Service() {
         try { player?.release() } catch (_: Throwable) {}
         player = null
         if (i >= files.size) {
+            StopBubble.hide(this)
             abandonFocus()
             return
         }
@@ -160,12 +171,23 @@ class DuaService : Service() {
     }
 
     private var focus: Any? = null
+    private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
+        if (change == AudioManager.AUDIOFOCUS_LOSS || change == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) stopPlayback()
+    }
+
+    private fun stopPlayback() {
+        StopBubble.hide(this)
+        try { player?.release() } catch (_: Throwable) {}
+        player = null
+        abandonFocus()
+    }
 
     private fun requestFocus() {
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if (Build.VERSION.SDK_INT >= 26) {
-            val r = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+            val r = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
                 .setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build())
+                .setOnAudioFocusChangeListener(focusListener)
                 .build()
             focus = r
             am.requestAudioFocus(r)
@@ -178,6 +200,7 @@ class DuaService : Service() {
     }
 
     override fun onDestroy() {
+        StopBubble.hide(this)
         try { unregisterReceiver(screen) } catch (_: Throwable) {}
         try { player?.release() } catch (_: Throwable) {}
         super.onDestroy()

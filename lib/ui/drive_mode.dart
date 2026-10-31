@@ -9,7 +9,9 @@ import '../services/player.dart';
 import '../services/prayer.dart';
 import '../services/settings.dart';
 import 'adhan_banner.dart';
+import 'car_dash.dart';
 import 'glass.dart';
+import 'interrupt_bar.dart';
 
 /// The driving-mode looks the user can pick from (Settings → وضع السواقة).
 class DriveStyle {
@@ -21,6 +23,7 @@ class DriveStyle {
 }
 
 const driveStyles = <DriveStyle>[
+  DriveStyle('car', 'عداد السرعة', 'عداد حقيقي بالـ GPS + عربيتك + كمبيوتر الرحلة — كله بيتخصص', Icons.directions_car_filled_rounded),
   DriveStyle('luxury', 'فخامة', 'أسود صافي، اسم السورة ضخم وحلقة تقدّم ذهبية', Icons.diamond_outlined),
   DriveStyle('cockpit', 'تابلوه', 'عدادات زي عدادات العربية', Icons.speed_rounded),
   DriveStyle('ambient', 'أجواء', 'ألوان بتتحرك بهدوء ورا الكلام', Icons.blur_on_rounded),
@@ -173,6 +176,7 @@ class _DriveModeState extends State<DriveMode> with TickerProviderStateMixin {
               if (mounted) setState(() => _hint = null);
             }),
             const AdhanBanner(),
+            const InterruptBar(),
           ],
         );
       }),
@@ -181,6 +185,8 @@ class _DriveModeState extends State<DriveMode> with TickerProviderStateMixin {
 
   Widget _body(String style, _DriveData s) {
     switch (style) {
+      case 'car':
+        return CarDashBody(swap: s.swap, next: s.next, prev: s.prev);
       case 'cockpit':
         return _CockpitBody(s);
       case 'ambient':

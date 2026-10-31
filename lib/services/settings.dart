@@ -55,6 +55,21 @@ class Settings extends ChangeNotifier {
   // ---- drive mode
   String get driveStyle => _opt('driveStyle', 'luxury');
 
+  // ---- speedometer drive style
+  String get carGauge => _opt('carGauge', 'analog'); // analog | digital | neon | sport | minimal
+  int get carMax => _opt('carMax', 220);
+  bool get carMph => _opt('carMph', false);
+  String get carModel => _opt('carModel', 'sedan'); // sedan | suv | hatch | sport | pickup | none
+  int get carColor => _opt('carColor', 0xFFEDEDED);
+  int get carLimit => _opt('carLimit', 0); // warn above this speed, 0 = off
+  bool get carRoad => _opt('carRoad', true);
+  String get carView => _opt('carView', 'side'); // side | top
+  List<String> get carTiles {
+    final v = extra['carTiles'];
+    if (v is List) return v.map((e) => '$e').toList();
+    return const ['trip', 'time', 'max', 'avg', 'heading', 'clock'];
+  }
+
   // ---- widget
   String get widgetStyle => _opt('widgetStyle', 'glass');
 

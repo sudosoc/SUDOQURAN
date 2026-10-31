@@ -11,6 +11,7 @@ import 'drive_tab.dart';
 import 'interface_tab.dart';
 import 'prayer_tab.dart';
 import 'glass.dart';
+import 'interrupt_bar.dart';
 import 'photos_card.dart';
 import 'themes_tab.dart';
 
@@ -149,6 +150,7 @@ class _GeneralTabState extends State<_GeneralTab> {
             const _DownloadEverythingCard(),
             const SizedBox(height: 16),
             const DuaCard(),
+            const StopBubbleCard(),
             const BackupCard(),
             Glass(
               radius: 26,
