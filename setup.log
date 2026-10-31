@@ -1,0 +1,101 @@
+Recreating project ....
+  sudoquran.iml (created)
+  android/app/build.gradle.kts (created)
+  android/app/src/main/kotlin/com/sudosoc/sudoquran/MainActivity.kt (created)
+  android/sudoquran_android.iml (created)
+  android/build.gradle.kts (created)
+  .idea/libraries/Dart_SDK.xml (created)
+  .idea/libraries/KotlinJavaRuntime.xml (created)
+  .idea/workspace.xml (created)
+  .idea/runConfigurations/main_dart.xml (created)
+  .idea/modules.xml (created)
+  android/app/src/debug/AndroidManifest.xml (created)
+  android/app/src/main/AndroidManifest.xml (created)
+  android/app/src/main/res/mipmap-xhdpi/ic_launcher.png (created)
+  android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png (created)
+  android/app/src/main/res/values/styles.xml (created)
+  android/app/src/main/res/drawable/launch_background.xml (created)
+  android/app/src/main/res/values-night/styles.xml (created)
+  android/app/src/main/res/mipmap-hdpi/ic_launcher.png (created)
+  android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png (created)
+  android/app/src/main/res/drawable-v21/launch_background.xml (created)
+  android/app/src/main/res/mipmap-mdpi/ic_launcher.png (created)
+  android/app/src/profile/AndroidManifest.xml (created)
+  android/gradle.properties (created)
+  android/.gitignore (created)
+  android/settings.gradle.kts (created)
+  android/gradle/wrapper/gradle-wrapper.properties (created)
+Resolving dependencies...
+Downloading packages...
+Got dependencies.
+Upgrading analysis_options.yaml to exclude build and platform directories.
+Wrote 29 files.
+
+All done!
+You can find general documentation for Flutter at: https://docs.flutter.dev/
+Detailed API documentation is available at: https://api.flutter.dev/
+If you prefer video documentation, consider: https://www.youtube.com/c/flutterdev
+
+In order to run your application, type:
+
+  $ flutter run
+
+Your application code is in ./lib/main.dart.
+
+signingConfigs {
+        create("sudoquranRelease") {
+            storeFile = file("/home/runner/work/SUDOQURAN/SUDOQURAN/android_overrides/signing/sudoquran.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.getByName("sudoquranRelease")
+        }
+    }
+}
+
+kotlin {
+    c
+Resolving dependencies...
+Downloading packages...
+  audio_session 0.1.25 (0.2.4 available)
+  cli_util 0.4.2 (0.6.0 available)
+  code_assets 1.2.1 (2.1.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+  hooks 2.0.2 (2.2.0 available)
+  just_audio 0.9.46 (0.10.6 available)
+  just_audio_background 0.0.1-beta.13 (0.0.1-beta.17 available)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  objective_c 9.5.0 (9.6.2 available)
+  permission_handler 11.4.0 (13.0.2 available)
+  permission_handler_android 12.1.0 (14.1.1 available)
+  record_use 0.6.0 (1.1.1 available)
+  shared_preferences_foundation 2.5.7 (2.6.1 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+Got dependencies!
+18 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+  ════════════════════════════════════════════
+     FLUTTER LAUNCHER ICONS (v0.14.4)                               
+  ════════════════════════════════════════════
+  
+• Creating default icons Android
+• Creating adaptive icons Android
+• Overwriting the default Android launcher icon with a new icon
+• No colors.xml file found in your Android project
+• Creating colors.xml file and adding it to your Android project
+• Creating mipmap xml file Android
+No platform provided
+
+✓ Successfully generated launcher icons
+Android ready. Build with: flutter build apk --release --target-platform android-arm64

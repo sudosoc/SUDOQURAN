@@ -1,0 +1,21 @@
+Analyzing SUDOQURAN...                                          
+
+  error • The setter 'blur' isn't defined for the type 'Type'. Try importing the library that defines 'blur', correcting the name to the name of an existing setter, or defining a setter or field named 'blur' • lib/main.dart:33:7 • undefined_setter
+  error • The setter 'pattern' isn't defined for the type 'Type'. Try importing the library that defines 'pattern', correcting the name to the name of an existing setter, or defining a setter or field named 'pattern' • lib/main.dart:34:7 • undefined_setter
+  error • The setter 'animations' isn't defined for the type 'Type'. Try importing the library that defines 'animations', correcting the name to the name of an existing setter, or defining a setter or field named 'animations' • lib/main.dart:35:7 • undefined_setter
+  error • The setter 'wallpaper' isn't defined for the type 'Type'. Try importing the library that defines 'wallpaper', correcting the name to the name of an existing setter, or defining a setter or field named 'wallpaper' • lib/main.dart:36:7 • undefined_setter
+warning • The declaration '_ext' isn't referenced. Try removing the declaration of '_ext' • lib/services/library.dart:16:8 • unused_element
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/drive_mode.dart:970:33 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/drive_mode.dart:987:9 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/drive_mode.dart:987:56 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/glass.dart:111:27 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/glass.dart:113:21 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/glass.dart:114:19 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/glass.dart:209:40 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/ui/glass.dart:422:18 • prefer_const_literals_to_create_immutables
+warning • The '!' will have no effect because the receiver can't be null. Try removing the '!' operator • lib/ui/quran_page.dart:436:70 • unnecessary_non_null_assertion
+warning • The '!' will have no effect because the receiver can't be null. Try removing the '!' operator • lib/ui/ruqyah_page.dart:230:65 • unnecessary_non_null_assertion
+warning • The '!' will have no effect because the receiver can't be null. Try removing the '!' operator • lib/ui/ruqyah_page.dart:308:57 • unnecessary_non_null_assertion
+warning • The value of the field '_used' isn't used. Try removing the field, or using it • lib/ui/settings_page.dart:131:16 • unused_field
+
+17 issues found. (ran in 7.6s)
