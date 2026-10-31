@@ -480,7 +480,9 @@ def archive_tracks(queries, must, min_size, max_size, limit, title_must=None):
                 continue
             fname = urllib.parse.unquote(name.rsplit("/", 1)[-1])
             n, low = norm(fname), fname.lower()
-            if not any(norm(m) in n or m in low for m in must):
+            nt, lt = norm(title), str(title).lower()
+            if not any(norm(m) in n or m in low for m in must) and not (
+                    len(files) <= 30 and any(norm(m) in nt or m in lt for m in must)):
                 continue
             if title_must and not any(norm(m) in n or m in low for m in title_must):
                 continue
@@ -493,11 +495,11 @@ def archive_tracks(queries, must, min_size, max_size, limit, title_must=None):
 
     tracks = []
     with cf.ThreadPoolExecutor(8) as ex:
-        for res in ex.map(inspect, list(ids)[:60]):
+        for res in ex.map(inspect, list(ids)[:220]):
             tracks.extend(res)
     seen, keep = set(), []
     for t in sorted(tracks, key=lambda t: t["size"]):
-        k = (norm(t["title"])[:20], t["size"] // 200_000)
+        k = t["size"] // 50_000
         if k in seen:
             continue
         seen.add(k)
@@ -518,8 +520,9 @@ RADIO_GROUPS = [
      ["مكه", "makkah", "mecca", "makka", "saudi", "السعوديه", "haram"],
      ["https://stream.radiojar.com/0tpy1h0kxtzuv"]),
     ("madinah", "إذاعة المدينة المنورة", "المسجد النبوي الشريف",
-     ["المدينة المنورة", "Madinah", "Medina", "المسجد النبوي", "Masjid Nabawi"],
-     ["مدينه", "المدينه", "madinah", "medina", "madina", "nabawi", "نبوي"],
+     ["المدينة المنورة", "Madinah", "Medina", "Madina", "المسجد النبوي", "Masjid Nabawi", "Nabawi", "Al Madinah",
+      "Haramain", "Prophet Mosque", "مدينة"],
+     ["مدينه", "المدينه", "madinah", "medina", "madina", "nabawi", "نبوي", "haramain", "prophet"],
      []),
 ]
 
@@ -551,11 +554,21 @@ def radios():
                 t, low = norm(text), text.lower()
                 if not any(norm(g) in t or g in low for g in guard):
                     continue
-                if not any(norm(k) in t or k in low for k in ["قران", "قرآن", "quran", "koran", "coran", "حرم", "haram", "nabawi", "نبوي"]):
+                if gid != "madinah" and not any(norm(k) in t or k in low for k in ["قران", "قرآن", "quran", "koran", "coran", "حرم", "haram", "nabawi", "نبوي"]):
+                    continue
+                if gid == "madinah" and any(x in low for x in ["medina county", "ohio", "spain", "fm medina"]):
                     continue
                 u = st.get("url_resolved") or st.get("url")
                 if u:
                     cands.append((int(st.get("votes") or 0), u, st.get("name", "")))
+        if gid == "madinah":
+            for tag in ["madinah", "medina", "nabawi", "haramain"]:
+                data = get_json("https://de1.api.radio-browser.info/json/stations/bytag/" + urllib.parse.quote(tag)
+                                + "?hidebroken=true&order=votes&reverse=true&limit=25") or []
+                for st in data:
+                    u = st.get("url_resolved") or st.get("url")
+                    if u:
+                        cands.append((int(st.get("votes") or 0), u, st.get("name", "")))
         cands.sort(key=lambda x: -x[0])
         urls = []
         for u in fallback + [c[1] for c in cands]:
@@ -662,11 +675,12 @@ def main():
     result["everyayah"] = ea
     report.append(f"## everyayah (دعاء الركوب) — {ea}")
     result["adhan"] = archive_tracks(
-        ['"الأذان" مكة', 'اذان الحرم المكي', 'adhan makkah', 'azan mp3', '"أذان" بصوت',
+        ['adhan', 'azan', 'athan', 'اذان', 'الأذان', 'adzan', 'adhan collection', 'beautiful azan', 'azan mp3 collection',
+         '"الأذان" مكة', 'اذان الحرم المكي', 'adhan makkah', 'azan mp3', '"أذان" بصوت',
          'اذان المسجد النبوي', 'adhan madinah', 'اذان المسجد الاقصى', 'adhan al aqsa',
          'اذان عبد الباسط', 'اذان نصر الدين طوبار', 'اذان محمد رفعت', 'اذان الحصري', 'adhan mishary',
          'اذان علي ملا', 'adhan ali mulla', 'اذان ناصر القطامي', 'beautiful adhan'],
-        must=["اذان", "الاذان", "adhan", "azan", "adzan", "athan", "adan"], min_size=250_000, max_size=9_000_000, limit=20)
+        must=["اذان", "الاذان", "adhan", "azan", "adzan", "athan", "adan", "ezan"], min_size=250_000, max_size=9_000_000, limit=24)
     report.append(f"## adhan — {len(result['adhan'])} tracks")
     for t in result["adhan"]:
         report.append(f"- {t['title']} ({t['size'] // 1000} KB)")
