@@ -6,6 +6,9 @@ import '../services/settings.dart';
 import '../services/sources.dart';
 import 'about_tab.dart';
 import 'downloads_page.dart';
+import 'drive_tab.dart';
+import 'interface_tab.dart';
+import 'prayer_tab.dart';
 import 'glass.dart';
 import 'photos_card.dart';
 import 'themes_tab.dart';
@@ -22,8 +25,11 @@ class _SettingsSectionState extends State<SettingsSection> {
 
   static const _tabs = [
     (Icons.tune_rounded, 'عام'),
-    (Icons.download_for_offline_rounded, 'إدارة التحميل'),
+    (Icons.dashboard_customize_rounded, 'الواجهة'),
     (Icons.palette_rounded, 'الثيمات'),
+    (Icons.directions_car_rounded, 'وضع السواقة'),
+    (Icons.mosque_rounded, 'الصلاة'),
+    (Icons.download_for_offline_rounded, 'التحميل'),
     (Icons.person_rounded, 'عن المطور'),
   ];
 
@@ -36,8 +42,8 @@ class _SettingsSectionState extends State<SettingsSection> {
           padding: const EdgeInsets.fromLTRB(4, 4, 4, 16),
           child: Row(
             children: [
-              const Text('الإعدادات', style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900)),
-              const SizedBox(width: 24),
+              const Text('الإعدادات', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900)),
+              const SizedBox(width: 18),
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -64,8 +70,11 @@ class _SettingsSectionState extends State<SettingsSection> {
             index: _tab,
             children: const [
               _GeneralTab(),
-              DownloadsPage(),
+              InterfaceTab(),
               ThemesTab(),
+              DriveTab(),
+              PrayerTab(),
+              DownloadsPage(),
               AboutTab(),
             ],
           ),
@@ -140,6 +149,7 @@ class _GeneralTabState extends State<_GeneralTab> {
           children: [
             const _DownloadEverythingCard(),
             const SizedBox(height: 16),
+            const DuaCard(),
             Glass(
               radius: 26,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -161,14 +171,7 @@ class _GeneralTabState extends State<_GeneralTab> {
                     onChanged: s.setAutoDownload,
                   ),
                   const Divider(color: Colors.white12),
-                  _SwitchRow(
-                    icon: Icons.directions_car_rounded,
-                    title: 'افتح على وضع السواقة',
-                    subtitle: 'أول ما التطبيق يفتح يدخل على الشاشة الكبيرة على طول',
-                    value: s.driveOnLaunch,
-                    onChanged: s.setDriveOnLaunch,
-                  ),
-                  const Divider(color: Colors.white12),
+
                   _SwitchRow(
                     icon: Icons.play_circle_rounded,
                     title: 'استكمال التلاوة تلقائيًا',

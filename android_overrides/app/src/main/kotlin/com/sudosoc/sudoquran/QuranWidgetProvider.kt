@@ -16,14 +16,17 @@ class QuranWidgetProvider : AppWidgetProvider() {
         render(context, manager, ids)
     }
 
+    private data class Style(val bg: Int, val title: Int, val sub: Int, val btn: Int, val btnMain: Int)
+
     companion object {
         private const val PREFS = "quran_widget"
 
-        fun save(context: Context, title: String, subtitle: String, playing: Boolean) {
+        fun save(context: Context, title: String, subtitle: String, playing: Boolean, style: String = "glass") {
             context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
                 .putString("title", title)
                 .putString("subtitle", subtitle)
                 .putBoolean("playing", playing)
+                .putString("style", style)
                 .apply()
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, QuranWidgetProvider::class.java))
@@ -35,8 +38,22 @@ class QuranWidgetProvider : AppWidgetProvider() {
             val title = p.getString("title", "القرآن الكريم") ?: "القرآن الكريم"
             val subtitle = p.getString("subtitle", "اضغط للتشغيل") ?: ""
             val playing = p.getBoolean("playing", false)
+            val style = p.getString("style", "glass") ?: "glass"
+            val (bg, titleColor, subColor, btn, btnMain) = when (style) {
+                "amoled" -> Style(R.drawable.widget_bg_amoled, 0xFFF4F1EA.toInt(), 0xFFE6C27A.toInt(), R.drawable.widget_btn, R.drawable.widget_btn_primary)
+                "gold" -> Style(R.drawable.widget_bg_gold, 0xFF1A1206.toInt(), 0xFF4A3410.toInt(), R.drawable.widget_btn_dark, R.drawable.widget_btn_dark_primary)
+                "crimson" -> Style(R.drawable.widget_bg_crimson, 0xFFF4F1EA.toInt(), 0xFFE5484D.toInt(), R.drawable.widget_btn, R.drawable.widget_btn_crimson)
+                "clear" -> Style(R.drawable.widget_bg_clear, 0xFFFFFFFF.toInt(), 0xDDFFFFFF.toInt(), R.drawable.widget_btn, R.drawable.widget_btn_primary)
+                else -> Style(R.drawable.widget_bg, 0xFFF4F1EA.toInt(), 0xFFE6C27A.toInt(), R.drawable.widget_btn, R.drawable.widget_btn_primary)
+            }
             for (id in ids) {
                 val views = RemoteViews(context.packageName, R.layout.quran_widget).apply {
+                    setInt(R.id.widget_root, "setBackgroundResource", bg)
+                    setInt(R.id.widget_prev, "setBackgroundResource", btn)
+                    setInt(R.id.widget_next, "setBackgroundResource", btn)
+                    setInt(R.id.widget_play, "setBackgroundResource", btnMain)
+                    setTextColor(R.id.widget_title, titleColor)
+                    setTextColor(R.id.widget_subtitle, subColor)
                     setTextViewText(R.id.widget_title, title)
                     setTextViewText(R.id.widget_subtitle, subtitle)
                     setImageViewResource(

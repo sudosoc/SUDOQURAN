@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/library.dart';
 import '../services/settings.dart';
+import 'adhan_banner.dart';
 import 'drive_mode.dart';
 import 'glass.dart';
 import 'now_playing.dart';
@@ -50,34 +51,35 @@ class _HomeShellState extends State<HomeShell> {
               padding: const EdgeInsets.all(18),
               child: LayoutBuilder(builder: (context, c) {
                 final playerWidth = (c.maxWidth * 0.30).clamp(340.0, 440.0).toDouble();
+                final rail = _SideRail(
+                  index: _tab,
+                  items: _items,
+                  onTap: (i) => setState(() => _tab = i),
+                );
+                final content = Expanded(
+                  child: IndexedStack(
+                    index: _tab,
+                    children: const [
+                      QuranSection(),
+                      RuqyahSection(),
+                      SettingsSection(),
+                    ],
+                  ),
+                );
+                final player = SizedBox(width: playerWidth, child: const NowPlayingPanel());
+                // RTL row: first child = right edge. "left" puts the player on the
+                // driver's side in a left-hand-drive car.
+                final playerLeft = Settings.instance.playerSide == 'left';
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // RTL: first child sits on the right edge.
-                    _SideRail(
-                      index: _tab,
-                      items: _items,
-                      onTap: (i) => setState(() => _tab = i),
-                    ),
-                    const SizedBox(width: 18),
-                    Expanded(
-                      child: IndexedStack(
-                        index: _tab,
-                        children: const [
-                          QuranSection(),
-                          RuqyahSection(),
-                          SettingsSection(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 18),
-                    // Left side = closest to the driver in a left-hand-drive car.
-                    SizedBox(width: playerWidth, child: const NowPlayingPanel()),
-                  ],
+                  children: playerLeft
+                      ? [rail, const SizedBox(width: 18), content, const SizedBox(width: 18), player]
+                      : [player, const SizedBox(width: 18), content, const SizedBox(width: 18), rail],
                 );
               }),
             ),
           ),
+          const AdhanBanner(),
         ],
       ),
     );
@@ -100,18 +102,16 @@ class _SideRail extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              width: 62,
-              height: 62,
-              alignment: Alignment.center,
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                    colors: [AppColors.gold, Color(0xFFB8893F)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
-                boxShadow: [BoxShadow(color: AppColors.gold.withOpacity(0.4), blurRadius: 24)],
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [BoxShadow(color: AppColors.gold.withOpacity(0.35), blurRadius: 24)],
               ),
-              child: Text('۞', style: TextStyle(fontSize: 34, color: AppColors.bg0)),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Image.asset('assets/icon.png', fit: BoxFit.cover),
+              ),
             ),
             const SizedBox(height: 26),
             for (var i = 0; i < items.length; i++)

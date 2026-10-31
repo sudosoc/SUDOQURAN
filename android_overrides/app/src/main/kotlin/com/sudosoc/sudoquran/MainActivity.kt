@@ -29,7 +29,8 @@ class MainActivity : AudioServiceActivity() {
                             applicationContext,
                             call.argument<String>("title") ?: "",
                             call.argument<String>("subtitle") ?: "",
-                            call.argument<Boolean>("playing") ?: false
+                            call.argument<Boolean>("playing") ?: false,
+                            call.argument<String>("style") ?: "glass"
                         )
                         result.success(true)
                     } catch (t: Throwable) {

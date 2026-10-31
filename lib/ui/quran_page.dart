@@ -4,6 +4,7 @@ import '../data/reciters.dart';
 import '../data/surahs.dart';
 import '../services/library.dart';
 import '../services/player.dart';
+import '../services/prayer.dart';
 import '../services/settings.dart';
 import '../services/sources.dart';
 import 'glass.dart';
@@ -53,7 +54,7 @@ class ReciterGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Listenable.merge([Library.instance, Settings.instance, Sources.instance, Player.instance]),
+      listenable: Listenable.merge([Library.instance, Settings.instance, Sources.instance, Player.instance, Prayer.instance]),
       builder: (context, _) {
         final last = Settings.instance.lastSession;
         final hour = DateTime.now().hour;
@@ -79,10 +80,24 @@ class ReciterGrid extends StatelessWidget {
                           const Text('القرآن الكريم', style: TextStyle(fontSize: 38, fontWeight: FontWeight.w900, height: 1.1)),
                         ],
                       ),
-                      const Spacer(),
-                      _StatPill(icon: Icons.record_voice_over_rounded, text: '${reciters.length} قارئ'),
-                      const SizedBox(width: 10),
-                      _StatPill(icon: Icons.offline_pin_rounded, text: '$offline أوفلاين بالكامل'),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Wrap(
+                          alignment: WrapAlignment.end,
+                          spacing: 10,
+                          runSpacing: 8,
+                          children: [
+                            if (Settings.instance.prayerEnabled)
+                              _StatPill(
+                                icon: Icons.mosque_rounded,
+                                text: '${Prayer.instance.next.$1} ${fmtClock(Prayer.instance.next.$2, h24: Settings.instance.clock24)}'
+                                    ' · بعد ${fmtCountdown(Prayer.instance.next.$2.difference(DateTime.now()))}',
+                              ),
+                            _StatPill(icon: Icons.record_voice_over_rounded, text: '${reciters.length} قارئ'),
+                            _StatPill(icon: Icons.offline_pin_rounded, text: '$offline أوفلاين'),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

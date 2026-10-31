@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'services/library.dart';
 import 'services/player.dart';
+import 'services/prayer.dart';
 import 'services/settings.dart';
 import 'services/sources.dart';
 import 'ui/glass.dart';
@@ -33,6 +34,7 @@ Future<void> main() async {
   // Don't block first frame on the notification permission dialog.
   Permission.notification.request().ignore();
   await Player.instance.init();
+  Prayer.instance.start();
 
   // Pull the latest verified links, then resume pending downloads.
   Sources.instance.refresh().whenComplete(() {
@@ -53,10 +55,13 @@ class SudoQuranApp extends StatelessWidget {
       listenable: Settings.instance,
       builder: (context, _) {
         final st = Settings.instance;
-        final sig = st.themeId == 'custom' ? 'custom-${st.customColors.join('-')}' : st.themeId;
+        final sig = '${st.themeId == 'custom' ? 'custom-${st.customColors.join('-')}' : st.themeId}|${st.uiSig}';
         if (_themeSig != sig) {
           _themeSig = sig;
           AppColors.apply(themeById(st.themeId, st.customColors));
+          AppStyle.blur = st.blur;
+          AppStyle.pattern = st.pattern;
+          AppStyle.animations = st.animations;
         }
         return MaterialApp(
           // A new key per theme rebuilds every widget with the new palette.
@@ -71,7 +76,14 @@ class SudoQuranApp extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Colors.white, fontSize: 13)),
                 );
-            return child!;
+            final mq = MediaQuery.of(context);
+            return MediaQuery(
+              data: mq.copyWith(
+                textScaler: TextScaler.linear(st.uiScale),
+                disableAnimations: !st.animations,
+              ),
+              child: child!,
+            );
           },
           title: 'القرآن الكريم',
           debugShowCheckedModeBanner: false,

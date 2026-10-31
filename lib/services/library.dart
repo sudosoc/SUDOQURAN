@@ -143,6 +143,61 @@ class Library extends ChangeNotifier {
     return f.existsSync() ? f : null;
   }
 
+  // -------------------------------------------------- travel du'a + adhan
+  Directory get duaDir => Directory('${root.path}/dua');
+  Directory get adhanDir => Directory('${root.path}/adhan');
+
+  /// Remote URLs for the selected du'a source, in play order.
+  List<String> duaUrls([String? source]) {
+    final src = source ?? Settings.instance.duaSource;
+    if (src.startsWith('url:')) return [src.substring(4)];
+    final rid = src.startsWith('ayat:') ? src.substring(5) : 'maher';
+    final folder = Sources.instance.everyAyah[rid] ?? (rid == 'maher' ? 'MaherAlMuaiqly128kbps' : null);
+    if (folder == null) return const [];
+    return [
+      'https://everyayah.com/data/$folder/043013.mp3',
+      'https://everyayah.com/data/$folder/043014.mp3',
+    ];
+  }
+
+  List<File> duaFiles([String? source]) => [
+        for (final u in duaUrls(source))
+          if (localIn(duaDir, RemoteTrack('', u, 0)) != null) localIn(duaDir, RemoteTrack('', u, 0))!
+      ];
+
+  Future<DownloadJob?> downloadDua([String? source]) async {
+    const key = 'dua';
+    if (isDownloading(key)) return jobs[key];
+    await duaDir.create(recursive: true);
+    final items = [
+      for (final u in duaUrls(source))
+        if (localIn(duaDir, RemoteTrack('', u, 0)) == null)
+          _Item([u], File('${duaDir.path}/${trackFileName(RemoteTrack('', u, 0))}'))
+    ];
+    return _run(key, items);
+  }
+
+  String? get selectedAdhanUrl {
+    final chosen = Settings.instance.adhanUrl;
+    if (chosen != null) return chosen;
+    final list = Sources.instance.adhan;
+    return list.isEmpty ? null : list.first.url;
+  }
+
+  File? adhanFile([String? url]) {
+    final u = url ?? selectedAdhanUrl;
+    return u == null ? null : localIn(adhanDir, RemoteTrack('', u, 0));
+  }
+
+  Future<DownloadJob?> downloadAdhan([String? url]) async {
+    const key = 'adhan';
+    final u = url ?? selectedAdhanUrl;
+    if (u == null || isDownloading(key)) return jobs[key];
+    await adhanDir.create(recursive: true);
+    if (adhanFile(u) != null) return null;
+    return _run(key, [_Item([u], File('${adhanDir.path}/${trackFileName(RemoteTrack('', u, 0))}'))]);
+  }
+
   String azkarKey(String ownerId) => 'azkar_$ownerId';
 
   Future<DownloadJob?> downloadAzkar(String ownerId) async {
@@ -319,6 +374,10 @@ class Library extends ChangeNotifier {
         if (_stopEverything) break;
         await downloadRuqyahTracks(s);
       }
+      everythingCurrent = 'دعاء الركوب والأذان';
+      notifyListeners();
+      await downloadDua();
+      await downloadAdhan();
       for (final id in azkarOwners) {
         if (_stopEverything) break;
         everythingCurrent = 'الأذكار';

@@ -13,7 +13,7 @@ import 'settings.dart';
 import 'sources.dart';
 import 'widget_bridge.dart';
 
-enum PlayKind { none, quran, ruqyahAyat, ruqyahTracks, azkar }
+enum PlayKind { none, quran, ruqyahAyat, ruqyahTracks, azkar, special }
 
 class Player extends ChangeNotifier {
   Player._();
@@ -57,12 +57,140 @@ class Player extends ChangeNotifier {
       if (audio.playing) _save();
     });
 
-    final s = Settings.instance.lastSession;
+    final st = Settings.instance;
+    final s = st.lastSession;
     if (s != null) {
       try {
-        await _restore(s, autoplay: Settings.instance.autoResume);
+        await _restore(s, autoplay: st.autoResume && !st.duaEnabled);
       } catch (_) {}
     }
+    if (st.duaEnabled) unawaited(playDuaThenResume());
+  }
+
+  // ------------------------------------------------- interrupts (du'a, adhan)
+  StreamSubscription<ProcessingState>? _intSub;
+
+  Future<void> _playInterrupt(List<AudioSource> src, String title, String subtitle,
+      {required Future<void> Function() then}) async {
+    await _intSub?.cancel();
+    final prevLoop = audio.loopMode;
+    kind = PlayKind.special;
+    this.title = title;
+    this.subtitle = subtitle;
+    artLetters = '';
+    notifyListeners();
+    await audio.setLoopMode(LoopMode.off);
+    await audio.setAudioSource(ConcatenatingAudioSource(children: src));
+    unawaited(audio.play());
+    _intSub = audio.processingStateStream.listen((st) async {
+      if (st == ProcessingState.completed) {
+        await _intSub?.cancel();
+        _intSub = null;
+        await audio.setLoopMode(prevLoop);
+        kind = PlayKind.none;
+        await then();
+        notifyListeners();
+      }
+    });
+  }
+
+  /// دعاء الركوب, then continue whatever was playing before.
+  Future<void> playDuaThenResume() async {
+    final lib = Library.instance;
+    final urls = lib.duaUrls();
+    final files = lib.duaFiles();
+    final src = <AudioSource>[];
+    if (files.isNotEmpty && files.length == urls.length) {
+      for (var i = 0; i < files.length; i++) {
+        src.add(AudioSource.file(files[i].path,
+            tag: MediaItem(id: 'dua_$i', title: 'دعاء الركوب', artist: 'سبحان الذي سخر لنا هذا', album: 'دعاء')));
+      }
+    } else if (Settings.instance.allowStreaming) {
+      for (var i = 0; i < urls.length; i++) {
+        src.add(AudioSource.uri(Uri.parse(urls[i]),
+            tag: MediaItem(id: 'dua_$i', title: 'دعاء الركوب', artist: 'سبحان الذي سخر لنا هذا', album: 'دعاء')));
+      }
+      unawaited(lib.downloadDua()); // keep it for next time
+    }
+    final snapshot = Settings.instance.lastSession;
+    Future<void> resume() async {
+      if (snapshot != null) await _restore(snapshot, autoplay: Settings.instance.autoResume);
+    }
+
+    if (src.isEmpty) return resume();
+    try {
+      await _playInterrupt(src, 'دعاء الركوب', 'سبحان الذي سخر لنا هذا', then: resume);
+    } catch (_) {
+      await resume();
+    }
+  }
+
+  /// Called by the prayer service at adhan time.
+  Future<void> adhanInterrupt(String prayerName) async {
+    if (kind == PlayKind.special) return;
+    final wasPlaying = audio.playing;
+    _save();
+    final snapshot = Settings.instance.lastSession;
+    final st = Settings.instance;
+    Future<void> after() async {
+      if (snapshot != null && kind != PlayKind.special) {
+        await _restore(snapshot, autoplay: wasPlaying && st.resumeAfterAdhan);
+      }
+    }
+
+    if (!st.adhanSound) {
+      if (wasPlaying) await audio.pause();
+      if (wasPlaying && st.resumeAfterAdhan) {
+        Future.delayed(const Duration(minutes: 4), () {
+          if (!audio.playing) audio.play();
+        });
+      }
+      return;
+    }
+    final lib = Library.instance;
+    final f = lib.adhanFile();
+    final url = lib.selectedAdhanUrl;
+    AudioSource? src;
+    final tag = MediaItem(id: 'adhan', title: 'أذان $prayerName', artist: 'حيّ على الصلاة', album: 'الأذان');
+    if (f != null) {
+      src = AudioSource.file(f.path, tag: tag);
+    } else if (url != null && st.allowStreaming) {
+      src = AudioSource.uri(Uri.parse(url), tag: tag);
+      unawaited(lib.downloadAdhan());
+    }
+    if (src == null) {
+      if (wasPlaying) await audio.pause();
+      return;
+    }
+    try {
+      await _playInterrupt([src], 'أذان $prayerName', 'حيّ على الصلاة', then: after);
+    } catch (_) {}
+  }
+
+  Future<void> stopInterrupt() async {
+    if (kind != PlayKind.special) return;
+    final cb = _intSub;
+    _intSub = null;
+    await cb?.cancel();
+    await audio.stop();
+    kind = PlayKind.none;
+    final s = Settings.instance.lastSession;
+    if (s != null) await _restore(s, autoplay: false);
+    notifyListeners();
+  }
+
+  /// Titles around the current item (for carousel-style views).
+  (String?, String?) get neighbours {
+    final seq = audio.sequence;
+    final i = audio.currentIndex;
+    if (seq == null || i == null) return (null, null);
+    String? t(int j) {
+      if (j < 0 || j >= seq.length) return null;
+      final tag = seq[j].tag;
+      return tag is MediaItem ? tag.title : null;
+    }
+
+    return (t(i - 1), t(i + 1));
   }
 
   @override
@@ -262,7 +390,7 @@ class Player extends ChangeNotifier {
 
   // ------------------------------------------------------ persistence
   void _save() {
-    if (kind == PlayKind.none) return;
+    if (kind == PlayKind.none || kind == PlayKind.special) return;
     final idx = audio.currentIndex ?? 0;
     Settings.instance.saveSession({
       'kind': kind.name,

@@ -28,6 +28,9 @@ class Sources extends ChangeNotifier {
   Map<String, Map<int, List<String>>> _reciters = {};
   Map<String, List<RemoteTrack>> _ruqyah = {};
   Map<String, Map<String, List<RemoteTrack>>> _azkar = {};
+  Map<String, String> everyAyah = {}; // reciterId -> verified everyayah folder
+  List<RemoteTrack> adhan = [];
+  List<RemoteTrack> duaRukub = [];
   Map<String, String> labels = {};
   String? generated;
   bool refreshing = false;
@@ -110,6 +113,14 @@ class Sources extends ChangeNotifier {
       });
       az['$id'] = m;
     });
+    List<RemoteTrack> tracks(dynamic l) => [
+          for (final t in (l as List? ?? const []))
+            RemoteTrack('${(t as Map)['title']}', '${t['url']}', (t['size'] as num?)?.toInt() ?? 0)
+        ];
+    everyAyah = Map<String, String>.from(
+        (j['everyayah'] as Map? ?? {}).map((k, v) => MapEntry('$k', '$v')));
+    adhan = tracks(j['adhan']);
+    duaRukub = tracks(j['dua_rukub']);
     _reciters = rec;
     _ruqyah = ru;
     _azkar = az;

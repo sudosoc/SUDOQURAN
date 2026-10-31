@@ -54,6 +54,13 @@ AppThemeData themeById(String? id, [List<int>? custom]) {
   return appThemes.firstWhere((t) => t.id == id, orElse: () => appThemes.first);
 }
 
+/// Interface options (set from Settings before the UI rebuilds).
+class AppStyle {
+  static double blur = 22;
+  static bool pattern = true;
+  static bool animations = true;
+}
+
 /// Live palette — values change when the user picks another theme.
 class AppColors {
   static String themeId = 'emerald';
@@ -157,13 +164,13 @@ class Glass extends StatelessWidget {
       ),
       child: child,
     );
-    if (!blur) {
+    if (!blur || AppStyle.blur < 1) {
       return ClipRRect(borderRadius: BorderRadius.circular(radius), child: body);
     }
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+        filter: ImageFilter.blur(sigmaX: AppStyle.blur, sigmaY: AppStyle.blur),
         child: body,
       ),
     );
@@ -285,6 +292,7 @@ class _BgPainter extends CustomPainter {
     orb(Offset(size.width * 0.45, size.height * 0.45), size.height * 0.45,
         AppColors.teal);
 
+    if (!AppStyle.pattern) return;
     // eight-pointed star lattice
     final p = Paint()
       ..style = PaintingStyle.stroke
@@ -312,8 +320,8 @@ class _BgPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// Gold-ringed disc: the photo the user chose for that sheikh, otherwise a
-/// painted mushaf (open Quran) on the theme colours.
+/// Gold-ringed disc: the photo the user chose for that sheikh, otherwise the
+/// app's mushaf artwork.
 class ReciterAvatar extends StatelessWidget {
   final String letters; // kept for API compatibility
   final String? photoId;
@@ -342,9 +350,9 @@ class ReciterAvatar extends StatelessWidget {
       ),
       child: photo != null
           ? null
-          : Padding(
-              padding: EdgeInsets.all(size * 0.17),
-              child: CustomPaint(painter: MushafPainter(AppColors.gold, AppColors.bg0)),
+          : ClipOval(
+              child: Image.asset('assets/mushaf.jpg',
+                  fit: BoxFit.cover, width: size, height: size, cacheWidth: (size * 2).round()),
             ),
     );
   }
