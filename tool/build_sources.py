@@ -507,6 +507,77 @@ def archive_tracks(queries, must, min_size, max_size, limit, title_must=None):
     return good[:limit]
 
 
+# ------------------------------------------------------------------ radios
+RADIO_GROUPS = [
+    ("egypt", "إذاعة القرآن الكريم من القاهرة", "مصر · 98.2 FM",
+     ["القرآن الكريم من القاهرة", "Egyptian Holy Quran", "Quran Cairo", "اذاعة القران الكريم", "Holy Quran Radio Cairo"],
+     ["قاهره", "القاهره", "cairo", "egypt", "مصر", "المصريه"],
+     ["https://stream.radiojar.com/8s5u5tpdtwzuv", "https://n02.radiojar.com/8s5u5tpdtwzuv"]),
+    ("makkah", "إذاعة القرآن الكريم من مكة", "السعودية · بث الحرم والإذاعة",
+     ["مكة", "Makkah", "Mecca", "Quran Radio Saudi", "إذاعة القرآن الكريم السعودية", "Saudi Quran"],
+     ["مكه", "makkah", "mecca", "makka", "saudi", "السعوديه", "haram"],
+     ["https://stream.radiojar.com/0tpy1h0kxtzuv"]),
+    ("madinah", "إذاعة المدينة المنورة", "المسجد النبوي الشريف",
+     ["المدينة المنورة", "Madinah", "Medina", "المسجد النبوي", "Masjid Nabawi"],
+     ["مدينه", "المدينه", "madinah", "medina", "madina", "nabawi", "نبوي"],
+     []),
+]
+
+
+def check_stream(url, timeout=20):
+    try:
+        req = urllib.request.Request(url, headers=UA)
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            ct = (r.headers.get("Content-Type") or "").lower()
+            head = r.read(2048)
+            if "mpegurl" in ct or url.lower().split("?")[0].endswith(".m3u8") or head.startswith(b"#EXTM3U"):
+                return True
+            looks = head[:3] == b"ID3" or (len(head) > 1 and head[0] == 0xFF and (head[1] & 0xE0) == 0xE0)
+            return looks or "audio" in ct or "aacp" in ct or "ogg" in ct
+    except Exception:
+        return False
+
+
+def radios():
+    out = []
+    api = "https://de1.api.radio-browser.info/json/stations/search?"
+    for gid, name, desc, queries, guard, fallback in RADIO_GROUPS:
+        cands = []
+        for q in queries:
+            data = get_json(api + urllib.parse.urlencode(
+                {"name": q, "hidebroken": "true", "order": "votes", "reverse": "true", "limit": 25})) or []
+            for st in data:
+                text = f"{st.get('name', '')} {st.get('country', '')} {st.get('tags', '')}"
+                t, low = norm(text), text.lower()
+                if not any(norm(g) in t or g in low for g in guard):
+                    continue
+                if not any(norm(k) in t or k in low for k in ["قران", "قرآن", "quran", "koran", "coran", "حرم", "haram", "nabawi", "نبوي"]):
+                    continue
+                u = st.get("url_resolved") or st.get("url")
+                if u:
+                    cands.append((int(st.get("votes") or 0), u, st.get("name", "")))
+        cands.sort(key=lambda x: -x[0])
+        urls = []
+        for u in fallback + [c[1] for c in cands]:
+            if u not in urls:
+                urls.append(u)
+        with cf.ThreadPoolExecutor(8) as ex:
+            ok = [u for u, g in zip(urls[:14], ex.map(check_stream, urls[:14])) if g]
+        out.append({"id": gid, "name": name, "desc": desc, "urls": ok[:4],
+                    "found": [c[2] for c in cands[:5]]})
+
+    # every reciter radio from mp3quran (24/7 recitation by one reciter)
+    data = get_json("https://www.mp3quran.net/api/v3/radios?language=ar") or {}
+    extra = []
+    for r in (data.get("radios") or [])[:400]:
+        u, n = r.get("url"), r.get("name")
+        if u and n:
+            extra.append({"id": f"mq{r.get('id')}", "name": n.strip(), "desc": "mp3quran", "urls": [u]})
+    with cf.ThreadPoolExecutor(16) as ex:
+        good = [e for e, g in zip(extra, ex.map(lambda e: check_stream(e["urls"][0]), extra)) if g]
+    return out, good
+
+
 # ------------------------------------------------------------------ main
 def main():
     report = ["# Sources report", ""]
@@ -591,8 +662,11 @@ def main():
     result["everyayah"] = ea
     report.append(f"## everyayah (دعاء الركوب) — {ea}")
     result["adhan"] = archive_tracks(
-        ['"الأذان" مكة', 'اذان الحرم المكي', 'adhan makkah', 'azan mp3', '"أذان" بصوت'],
-        must=["اذان", "الاذان", "adhan", "azan", "adzan"], min_size=300_000, max_size=9_000_000, limit=8)
+        ['"الأذان" مكة', 'اذان الحرم المكي', 'adhan makkah', 'azan mp3', '"أذان" بصوت',
+         'اذان المسجد النبوي', 'adhan madinah', 'اذان المسجد الاقصى', 'adhan al aqsa',
+         'اذان عبد الباسط', 'اذان نصر الدين طوبار', 'اذان محمد رفعت', 'اذان الحصري', 'adhan mishary',
+         'اذان علي ملا', 'adhan ali mulla', 'اذان ناصر القطامي', 'beautiful adhan'],
+        must=["اذان", "الاذان", "adhan", "azan", "adzan", "athan", "adan"], min_size=250_000, max_size=9_000_000, limit=20)
     report.append(f"## adhan — {len(result['adhan'])} tracks")
     for t in result["adhan"]:
         report.append(f"- {t['title']} ({t['size'] // 1000} KB)")
@@ -603,6 +677,15 @@ def main():
     report.append(f"## dua_rukub — {len(result['dua_rukub'])} tracks")
     for t in result["dua_rukub"]:
         report.append(f"- {t['title']} ({t['size'] // 1000} KB)")
+    report.append("")
+
+    main_r, extra_r = radios()
+    result["radios"] = main_r
+    result["radios_extra"] = extra_r
+    report.append("## radios")
+    for r in main_r:
+        report.append(f"- {r['name']}: {len(r['urls'])} working stream(s) {r['urls'][:1]} · found: {r['found']}")
+    report.append(f"- reciter radios (mp3quran): {len(extra_r)}")
     report.append("")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
