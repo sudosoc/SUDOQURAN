@@ -29,11 +29,10 @@ Future<void> main() async {
 
   await Settings.instance.load();
   AppColors.apply(themeById(Settings.instance.themeId, Settings.instance.customColors));
-  AppStyle
-    ..blur = Settings.instance.blur
-    ..pattern = Settings.instance.pattern
-    ..animations = Settings.instance.animations
-    ..wallpaper = Settings.instance.wallpaper;
+  AppStyle.blur = Settings.instance.blur;
+  AppStyle.pattern = Settings.instance.pattern;
+  AppStyle.animations = Settings.instance.animations;
+  AppStyle.wallpaper = Settings.instance.wallpaper;
   await Library.instance.init();
   await Sources.instance.load();
   // Don't block first frame on the notification permission dialog.
