@@ -10,6 +10,7 @@ import '../data/ruqyah.dart';
 import '../data/surahs.dart';
 import 'library.dart';
 import 'settings.dart';
+import 'dua_bridge.dart';
 import 'sources.dart';
 import 'widget_bridge.dart';
 
@@ -66,7 +67,16 @@ class Player extends ChangeNotifier {
         await _restore(s, autoplay: st.autoResume && !st.duaEnabled);
       } catch (_) {}
     }
-    if (st.duaEnabled) unawaited(playDuaThenResume());
+    if (st.duaEnabled) {
+      // If the background service just recited it (car started), don't repeat it.
+      final last = await DuaBridge.lastPlayed();
+      final recent = last != null && DateTime.now().difference(last).inMinutes < 3;
+      if (recent) {
+        if (s != null && st.autoResume) unawaited(_restore(s, autoplay: true));
+      } else {
+        unawaited(playDuaThenResume());
+      }
+    }
   }
 
   // ------------------------------------------------- interrupts (du'a, adhan)

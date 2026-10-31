@@ -67,8 +67,21 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                <!-- common head-unit ignition (ACC on) broadcasts -->
+                <action android:name="com.fyt.boot.ACCON"/>
+                <action android:name="com.syu.ms.acc.on"/>
+                <action android:name="android.intent.action.ACC_ON"/>
+                <action android:name="com.ts.main.acc.on"/>
+                <action android:name="autochips.intent.action.QB_POWERON"/>
             </intent-filter>
         </receiver>
+        <service
+            android:name=".DuaService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback"/>
         <service
             android:name=".AdhanService"
             android:exported="false"

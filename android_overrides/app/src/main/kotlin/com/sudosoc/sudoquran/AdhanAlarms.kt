@@ -133,7 +133,12 @@ class AdhanAlarmReceiver : BroadcastReceiver() {
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        AdhanScheduler.reschedule(context)
+        try { AdhanScheduler.reschedule(context) } catch (_: Throwable) {}
+        // Car started (full boot / quick boot / head-unit ACC-on): دعاء الركوب
+        if (DuaService.enabled(context)) {
+            val replaced = intent.action == Intent.ACTION_MY_PACKAGE_REPLACED
+            DuaService.start(context, if (replaced) null else "PLAY_BOOT")
+        }
     }
 }
 

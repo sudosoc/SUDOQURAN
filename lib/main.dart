@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'services/dua_bridge.dart';
 import 'services/library.dart';
 import 'services/player.dart';
 import 'services/prayer.dart';
@@ -39,6 +40,9 @@ Future<void> main() async {
   Permission.notification.request().ignore();
   await Player.instance.init();
   Prayer.instance.start();
+  DuaBridge.sync();
+  Settings.instance.addListener(DuaBridge.sync);
+  Library.instance.addListener(DuaBridge.sync);
 
   // Pull the latest verified links, then resume pending downloads.
   Sources.instance.refresh().whenComplete(() {

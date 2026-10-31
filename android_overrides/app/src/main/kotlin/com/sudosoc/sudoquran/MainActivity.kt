@@ -66,6 +66,30 @@ class MainActivity : AudioServiceActivity() {
             }
         }
 
+        MethodChannel(messenger, "sudoquran/dua").setMethodCallHandler { call, result ->
+            try {
+                when (call.method) {
+                    "configure" -> {
+                        DuaService.configure(
+                            applicationContext,
+                            call.argument<Boolean>("enabled") ?: false,
+                            call.argument<List<String>>("paths") ?: emptyList()
+                        )
+                        result.success(true)
+                    }
+                    "lastPlayed" -> result.success(DuaService.lastPlayed(applicationContext))
+                    "test" -> {
+                        applicationContext.getSharedPreferences(DuaService.PREFS, android.content.Context.MODE_PRIVATE).edit().putLong("last", 0L).apply()
+                        DuaService.start(applicationContext, "PLAY")
+                        result.success(true)
+                    }
+                    else -> result.notImplemented()
+                }
+            } catch (t: Throwable) {
+                result.error("dua", t.message, null)
+            }
+        }
+
         MethodChannel(messenger, "sudoquran/backup").setMethodCallHandler { call, result ->
             when (call.method) {
                 "save" -> {

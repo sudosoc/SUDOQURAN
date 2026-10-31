@@ -61,6 +61,7 @@ class Settings extends ChangeNotifier {
   // ---- travel du'a (دعاء الركوب)
   bool get duaEnabled => _opt('duaEnabled', true);
   String get duaSource => _opt('duaSource', 'ayat:maher'); // ayat:<reciterId> | url:<url>
+  bool get duaOnCarStart => _opt('duaOnCarStart', true); // background, without opening the app
 
   // ---- prayer
   bool get prayerEnabled => _opt('prayerEnabled', true);

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../services/dua_bridge.dart';
 import '../services/library.dart';
 import '../services/player.dart';
 import '../services/prayer.dart';
@@ -284,12 +285,35 @@ class DuaCard extends StatelessWidget {
           subtitle: '﴿سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ﴾ — أول ما التطبيق يفتح',
           children: [
             ToggleRow(
-              title: 'تشغيل دعاء الركوب عند فتح التطبيق',
+              title: 'تشغيل دعاء الركوب',
               subtitle: ready ? 'جاهز أوفلاين ✓' : 'هيتحمّل أول مرة يشتغل',
               value: st.duaEnabled,
               onChanged: (v) => st.setOpt('duaEnabled', v),
             ),
+            ToggleRow(
+              title: 'أول ما العربية تدور — تلقائي في الخلفية',
+              subtitle: 'من غير ما تفتح التطبيق: الشاشة تصحى ← الدعاء يشتغل على طول',
+              value: st.duaOnCarStart,
+              onChanged: (v) => st.setOpt('duaOnCarStart', v),
+            ),
             const SizedBox(height: 8),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: GlassButton(
+                icon: Icons.play_circle_rounded,
+                label: 'جرّب الدعاء دلوقتي',
+                size: 52,
+                onTap: () async {
+                  if (!ready) {
+                    await Library.instance.downloadDua();
+                    if (context.mounted) toast(context, 'بيتحمّل… جرّب كمان ثواني');
+                    return;
+                  }
+                  await DuaBridge.test();
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
             ChoiceRow<String>(
               options: options,
               value: st.duaSource,
