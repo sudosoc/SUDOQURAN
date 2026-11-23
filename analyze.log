@@ -1,0 +1,18 @@
+Analyzing SUDOQURAN...                                          
+
+warning • The declaration '_ext' isn't referenced. Try removing the declaration of '_ext' • lib/services/library.dart:16:8 • unused_element
+   info • Use 'const' for final variables initialized to a constant value. Try replacing 'final' with 'const' • lib/ui/car_dash.dart:652:5 • prefer_const_declarations
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/drive_mode.dart:976:33 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/drive_mode.dart:993:9 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/drive_mode.dart:993:56 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/glass.dart:111:27 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/glass.dart:113:21 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/glass.dart:114:19 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/ui/glass.dart:209:40 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/ui/glass.dart:422:18 • prefer_const_literals_to_create_immutables
+warning • The '!' will have no effect because the receiver can't be null. Try removing the '!' operator • lib/ui/quran_page.dart:436:70 • unnecessary_non_null_assertion
+warning • The '!' will have no effect because the receiver can't be null. Try removing the '!' operator • lib/ui/ruqyah_page.dart:230:65 • unnecessary_non_null_assertion
+warning • The '!' will have no effect because the receiver can't be null. Try removing the '!' operator • lib/ui/ruqyah_page.dart:308:57 • unnecessary_non_null_assertion
+warning • The value of the field '_used' isn't used. Try removing the field, or using it • lib/ui/settings_page.dart:132:16 • unused_field
+
+14 issues found. (ran in 6.7s)
